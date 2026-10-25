@@ -200,14 +200,14 @@ Everything between an agent and the simulator passes through code checks (the �
   <path d="M 600 237 L 600 310 L 513 310" fill="none" stroke="#5e554c" marker-end="url(#a)"/>
   <line x1="300" y1="310" x2="272" y2="310" stroke="#5e554c" marker-end="url(#a)"/>
   <!-- tuner loop -->
-  <path d="M 510 365 L 650 365 L 650 240" fill="none" stroke="#a9831a" stroke-width="2.5" marker-end="url(#a)"/>
-  <text x="405" y="401" text-anchor="middle" fill="#8a6a10" font-weight="bold" font-size="11.5">gold loop: every proposal is re-simulated</text>
+  <path d="M 510 365 L 650 365 L 650 239" fill="none" stroke="#5e554c" marker-end="url(#a)"/>
+  <text x="405" y="401" text-anchor="middle" fill="#5e554c" font-size="11.5">every proposal is re-simulated</text>
   <!-- meter -->
   <rect x="20" y="410" width="820" height="40" rx="6" fill="#fff6dc" stroke="#a9831a"/>
   <text x="35" y="435" fill="#5e3d00">🛡️ Every model call goes through one metered client: token log (input · cached · output · cost), per-run spending cap, 30-call limit.</text>
 </svg>
 <figcaption><b>Figure 1.</b> Agent organization. Dark boxes are LLM agents, the red box is deterministic code, and gold marks are
-safety checks. The Tuner loop (gold arrow) is the key design choice: the agent proposes, and the simulator decides.</figcaption>
+safety checks. The Tuner → simulator arrow is the key design choice: the agent proposes a change, and the simulator re-checks it before the Tuner tries again.</figcaption>
 </figure>
 
 <h3>Each agent's job</h3>

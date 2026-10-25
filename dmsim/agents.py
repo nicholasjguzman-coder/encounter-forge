@@ -75,7 +75,9 @@ def parse_encounter(edition, text, meter):
         ' "surprise": "none"|"party"|"monsters"|null (which side is surprised),'
         ' "unmatched": [names you could not match], "notes": short str}\n'
         "Pick the closest catalog monster for each creature (e.g. 'goblin archers' -> the goblin entry). "
-        "Use only ids from the catalog. If the party is not described, return an empty party list.\n"
+        "Use only ids from the catalog. If the party is not described at all, return an empty party list. If the "
+        "number and level of adventurers are given but not their classes, fill in a balanced party in this order: "
+        "fighter, cleric, rogue, wizard, ranger, bard, and say so in notes.\n"
         f"Subclasses by class: {json.dumps(SUBCLASSES[edition])}\n"
         f"Monster catalog for the {data.EDITIONS[edition]}: " + _monster_catalog(edition)
     )

@@ -21,12 +21,12 @@ Both rule sets are supported, each in its own tab: **5e (2014)** and **5.5e (202
 
 ---
 
-## Run it (about 3 minutes)
+## Run it (about 3 minutes; a fresh-clone dry run took under 1 minute to install)
 
 Requires Python 3.10 or newer.
 
 ```bash
-git clone <this repo>
+git clone https://github.com/nicholasjguzman-coder/encounter-forge.git
 cd encounter-forge
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -48,8 +48,8 @@ official difficulty ratings all still work, because every number comes from code
 
 **Try it.** Press **🎲 Run the playtest** with the default party (fighter, cleric, wizard and rogue, all level 5)
 against 2 ogres and 4 goblins. Then choose a target difficulty and press **🔧 Tune the encounter**. You can also
-open **✍️ Describe the encounter in plain English** and type something like *"Three level-2 adventurers are
-ambushed by a bugbear and three goblins at 30 feet."*
+open **✍️ Describe the encounter in plain English** and type something like *"Three level-2 adventurers (a fighter, a
+rogue and a cleric) are ambushed by a bugbear and three goblins at 30 feet."*
 
 Run the offline tests (no API key needed):
 

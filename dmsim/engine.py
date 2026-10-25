@@ -86,6 +86,10 @@ class C:
         self.spells, self.item_spells = [], []
         self.resources, self.resources_max = {}, {}
         self.features = {}
+        self.size = "Medium"
+        self.acted = False
+        self.cursed = self.vow_target = None
+        self.twilight = self.starry = 0
 
     # -- state helpers --
     @property
@@ -126,6 +130,7 @@ def make_monster(edition, index, label):
     comp = copy.deepcopy(data.compiled(edition, "monsters")[index])
     c = C(label, "enemies")
     c.index, c.cr, c.xp, c.ctype = index, base["cr"], base["xp"], base["type"]
+    c.size = base["size"]
     c.max_hp = c.hp = base["hp"]
     c.ac, c.speed, c.saves, c.init = base["ac"], base["speed"], base["saves"], base["init"]
     c.resist, c.immune, c.vuln = set(base["resist"]), set(base["immune"]), set(base["vuln"])
@@ -179,8 +184,8 @@ def make_monster(edition, index, label):
     return c
 
 
-def make_pc(edition, cls, level, label):
-    b = build_pc(edition, cls, level, label)
+def make_pc(edition, cls, level, label, subclass=None):
+    b = build_pc(edition, cls, level, label, subclass=subclass)
     c = C(label, "party")
     c.cls, c.level, c.build = cls, level, b
     c.max_hp = c.hp = b["hp"]
@@ -370,7 +375,9 @@ class Battle:
             adv = True
         if att.is_pc and att.features.get("reckless") and melee and att.raging:
             adv = True
-        if att.vex_target is tgt:
+        if att.vex_target is tgt or (att.vow_target is tgt and tgt.up):
+            adv = True
+        if att.features.get("assassinate") and self.round == 1 and not tgt.acted:
             adv = True
         if ATTACK_DISADV & att.conditions.keys():
             dis = True
@@ -381,14 +388,14 @@ class Battle:
         return (1 if adv else 0) - (1 if dis else 0)
 
     # -- damage --
-    def apply_damage(self, tgt, amount, dtype, src=None, crit=False, magical=True, melee=False):
+    def apply_damage(self, tgt, amount, dtype, src=None, crit=False, magical=True, melee=False, spell=False):
         if amount <= 0 or tgt.dead:
             return 0
         if dtype in tgt.immune or (not magical and dtype in tgt.immune_nm):
             return 0
         if dtype in tgt.resist or (not magical and dtype in tgt.resist_nm) or \
                 any(dtype in (b.get("resistances") or []) for b, _ in tgt.buffs) or \
-                (tgt.raging and dtype in PHYSICAL):
+                self.rage_resists(tgt, dtype) or (spell and tgt.is_pc and self.warded()):
             amount //= 2
         if dtype in tgt.vuln:
             amount *= 2
@@ -487,11 +494,21 @@ class Battle:
             p = p * p
         return p
 
+    @staticmethod
+    def rage_resists(t, dtype):
+        if not t.raging:
+            return False
+        excl = t.features.get("rage_resist_all")
+        return dtype in PHYSICAL or (excl is not None and dtype not in excl)
+
+    def warded(self):
+        return any(p.up and p.features.get("aura_warding") for p in self.party)
+
     def dmg_mult(self, tgt, dtype, magical=True):
         if dtype in tgt.immune or (not magical and dtype in tgt.immune_nm):
             return 0
         m = 1.0
-        if dtype in tgt.resist or (not magical and dtype in tgt.resist_nm) or (tgt.raging and dtype in PHYSICAL):
+        if dtype in tgt.resist or (not magical and dtype in tgt.resist_nm) or self.rage_resists(tgt, dtype):
             m = 0.5
         if dtype in tgt.vuln:
             m *= 2
@@ -609,6 +626,7 @@ class Battle:
     # ------------------------------------------------------------------------------------------
     def take_turn(self, c):
         c.reaction = True
+        c.acted = True
         c.sneak_used = False
         c.sapped = False
         if c.legendary_max:
@@ -655,6 +673,13 @@ class Battle:
                 self.resolve_damage_ability(c, aura, [f])
         if c.raging:
             c.raging -= 1
+        if c.starry:
+            c.starry -= 1
+        if c.twilight and c.up:
+            c.twilight -= 1
+            for x in self.allies(c):
+                if x.up:
+                    x.temp_hp = max(x.temp_hp, roll(self.rng, f"1d6+{c.level}"))
         if not c.up:
             return
         flee = self.t.per_monster.get(getattr(c, "index", ""), {}).get("flee_at", self.t.flee_at) if not c.is_pc else 0
@@ -1040,7 +1065,8 @@ class Battle:
                     break
                 t = live[i % len(live)]
                 for d in a.get("damage", []):
-                    self.apply_damage(t, roll(self.rng, d["dice"]), d.get("type", "force"), c, magical=magical)
+                    self.apply_damage(t, roll(self.rng, d["dice"]), d.get("type", "force"), c, magical=magical,
+                                      spell=bool(a.get("is_spell")))
         else:  # save-based (save / control / debuff with damage)
             sv = a.get("save") or {"ability": "dex", "dc": c.spell_dc, "half": False}
             dc = sv.get("dc") or c.spell_dc
@@ -1051,6 +1077,11 @@ class Battle:
                     continue
                 ok = self.make_save(t, sv.get("ability", "dex"), dc, is_spell=bool(a.get("is_spell")),
                                     important=bool(a.get("condition")) or sum(x for x, _ in dmg_rolls) > t.hp * 0.25)
+                if ok and c.resources.get("portent", 0) > 0 and a.get("is_spell") and not t.legendary_resistance \
+                        and (a.get("condition") or sum(x for x, _ in dmg_rolls) > t.hp * 0.4) and self.threat(t) >= 8:
+                    self.spend(c, "portent")
+                    ok = False
+                    self.log(f"{c.name} uses Portent on {t.name}")
                 evasion = t.is_pc and t.features.get("evasion") and sv.get("ability") == "dex" and sv.get("half")
                 for i, (amt, dt) in enumerate(dmg_rolls):
                     amt += bonus_once if i == 0 else 0
@@ -1058,7 +1089,7 @@ class Battle:
                         amt = 0 if (evasion or not sv.get("half")) else amt // 2
                     elif evasion:
                         amt //= 2
-                    self.apply_damage(t, amt, dt, c, magical=magical)
+                    self.apply_damage(t, amt, dt, c, magical=magical, spell=bool(a.get("is_spell")))
                 if not ok and a.get("condition") and t.present:
                     self.apply_condition(c, a, t, effect, sv)
                 elif ok and a.get("condition"):
@@ -1072,6 +1103,8 @@ class Battle:
             b += c.features["empowered_evocation"]
         if c.features.get("elemental_affinity") and a["damage"][0].get("type") == "fire":
             b += c.features["elemental_affinity"]
+        if c.features.get("radiant_soul") and a["damage"][0].get("type") in ("fire", "radiant"):
+            b += c.features["radiant_soul"]
         return b
 
     def apply_condition(self, c, a, t, effect, sv):
@@ -1093,6 +1126,12 @@ class Battle:
     def attack_roll(self, c, a, t, magical, effect=None):
         melee = bool(a.get("melee"))
         adv = self.attack_adv(c, t, melee)
+        flare = self.flare_for(c, t) if not c.is_pc else None
+        if flare:
+            flare.reaction = False
+            self.spend(flare, "warding_flare")
+            adv = max(-1, adv - 1)
+            self.log(f"{flare.name} uses Warding Flare against {c.name}")
         r = d20(self.rng, adv)
         bonus = (a.get("attack_bonus") or 0) + (c.attack_bonus_items if (a.get("weapon") or a.get("is_spell")) else 0)
         if c.is_pc and a.get("weapon") and getattr(c, "sacred", 0):
@@ -1103,6 +1142,8 @@ class Battle:
             if buff.get("attack_penalty"):
                 bonus -= roll(self.rng, buff["attack_penalty"])
         crit_range = c.features.get("crit", 20) if c.is_pc else 20
+        if c.cursed is t:
+            crit_range = min(crit_range, 19)
         crit = r >= crit_range
         total = r + bonus
         ac = self.ac_of(t)
@@ -1125,6 +1166,8 @@ class Battle:
                 t.reaction = False
                 hit = False
         if (melee and self.dist(c, t) <= 5) and ({"paralyzed", "unconscious"} & t.conditions.keys()) and hit:
+            crit = True
+        if hit and c.features.get("assassinate") and self.ed == "2014" and self.round == 1 and self.s.surprise == "monsters":
             crit = True
         if not hit:
             if c.is_pc and c.features.get("graze") and a.get("weapon") and melee:
@@ -1149,7 +1192,7 @@ class Battle:
             red = roll(self.rng, "1d10") + t.mods.get("dex", 0) + t.level
             parts = [(max(0, x - red), dt) for x, dt in parts]
         for amt, dt in parts:
-            self.apply_damage(t, amt, dt, c, crit=crit, magical=magical, melee=melee)
+            self.apply_damage(t, amt, dt, c, crit=crit, magical=magical, melee=melee, spell=bool(a.get("is_spell")))
         if c.is_pc and c.features.get("vex") and a.get("weapon"):
             c.vex_target, c._vex_fresh = t, True
         if c.is_pc and c.features.get("sap") and a.get("weapon"):
@@ -1175,6 +1218,16 @@ class Battle:
             t.regen_blocked = True
         return True
 
+    def flare_for(self, att, tgt):
+        """A Light cleric who can spend Warding Flare against this attack, if any."""
+        if self.threat(att) < 6:
+            return None
+        for p in self.party:
+            if p.up and p.reaction and p.resources.get("warding_flare", 0) > 0 and \
+                    (p is tgt or (self.ed == "2024" and tgt.is_pc)) and "blinded" not in att.cond_immune:
+                return p
+        return None
+
     def on_hit_riders(self, c, a, t, crit):
         out = []
         if not c.is_pc:
@@ -1193,8 +1246,45 @@ class Battle:
                 if f.get("frenzy") and self.ed == "2024" and not c.sneak_used:
                     c.sneak_used = True
                     out.append((roll(self.rng, f"{f.get('rage_damage', 2)}d6", crit), dtype))
+            if f.get("divine_fury") and c.raging and not c._df_used:
+                c._df_used = True
+                out.append((roll(self.rng, f"1d6+{c.level // 2}", crit), "radiant"))
+            if f.get("blade_flourish") and not c._bf_used and c.resources.get("bardic_inspiration", 0) > 0 and self.lam(c) < 3:
+                c._bf_used = True
+                self.spend(c, "bardic_inspiration")
+                out.append((roll(self.rng, f.get("inspiration_die", "1d6"), crit), dtype))
+            if f.get("sup_die") and not c._bm_used and c.resources.get("superiority", 0) > 0 and (crit or self.lam(c) < 3):
+                c._bm_used = True
+                self.spend(c, "superiority")
+                out.append((roll(self.rng, f["sup_die"], crit), dtype))
+                if "prone" not in t.conditions and t.size in ("Tiny", "Small", "Medium", "Large") and "prone" not in t.cond_immune \
+                        and not self.make_save(t, "str", f["maneuver_dc"], important=False):
+                    t.conditions["prone"] = {"rounds": 1, "save": None, "dc": 0, "save_ends": False, "effect": None}
+                    self.log(f"{c.name} trips {t.name}")
+            if f.get("hand_of_harm") and not c._hoh_used and c.resources.get("ki", 0) > 0 and self.lam(c) < 4 \
+                    and a["name"] in ("Unarmed Strike", "Martial Arts", "Flurry of Blows"):
+                c._hoh_used = True
+                self.spend(c, "ki")
+                out.append((roll(self.rng, f"{f.get('martial_arts_die', '1d6')}+{max(1, c.mods['wis'])}", crit), "necrotic"))
+            if f.get("dread_ambusher"):
+                if self.ed == "2014" and c._da_bonus:
+                    out.append((roll(self.rng, "1d8", crit), dtype))
+                elif self.ed == "2024" and not c._da2_used and c.resources.get("dread_ambusher", 0) > 0 and \
+                        (self.round <= 1 or self.lam(c) < 2):
+                    c._da2_used = True
+                    self.spend(c, "dread_ambusher")
+                    out.append((roll(self.rng, "2d6", crit), "psychic"))
+            if f.get("dreadful_strikes") and not c._fw_used:
+                c._fw_used = True
+                out.append((roll(self.rng, f["dreadful_strikes"], crit), "psychic"))
+            if f.get("hex_curse_bonus") and c.cursed is t:
+                out.append((f["hex_curse_bonus"], dtype))
+            if f.get("assassinate") and self.ed == "2024" and self.round == 1 and not c._as_used:
+                c._as_used = True
+                out.append((c.level, dtype))
             if f.get("sneak_attack") and not c.sneak_used and (
-                    self.attack_adv(c, t, melee) > 0 or any(x is not c and x.up and self.dist(x, t) <= 5 for x in self.allies(c))):
+                    self.attack_adv(c, t, melee) > 0 or any(x is not c and x.up and self.dist(x, t) <= 5 for x in self.allies(c))
+                    or (f.get("rakish") and melee and self.dist(c, t) <= 5)):
                 c.sneak_used = True
                 out.append((roll(self.rng, f["sneak_attack"], crit), dtype))
             if f.get("colossus_slayer") and not getattr(c, "_cs_used", False) and t.hp < t.max_hp:
@@ -1296,6 +1386,13 @@ class Battle:
         """All (adjusted value, raw value, plan, resource-key) options for an action or bonus action."""
         opts = []
         lam = self.lam(c)
+        if cost == "action" and c.features.get("radiance_of_dawn") and c.resources.get("channel_divinity", 0) > 0:
+            a = {"name": "Radiance of the Dawn", "kind": "save", "range": 30, "area": {"shape": "emanation", "size": 30},
+                 "save": {"ability": "con", "dc": c.spell_dc, "half": True},
+                 "damage": [{"dice": f"2d10+{c.level}", "type": "radiant"}], "targets": 1}
+            p = self.plan_for(c, a)
+            if p:
+                opts.append((p[0] - lam * RESOURCE_WEIGHTS["channel_divinity"], p[0], ("spell", p), "channel_divinity"))
         if cost == "action":
             for a in c.actions:  # weapon attacks (Attack action with Extra Attack)
                 p = self.plan_for(c, a)
@@ -1355,6 +1452,9 @@ class Battle:
 
     def pc_turn(self, c):
         c._cs_used = c._ds_used = c._smite_used = c._stun_tried = c._bonus_spell = False
+        c._df_used = c._bf_used = c._bm_used = c._hoh_used = c._fw_used = c._da2_used = False
+        c._da_bonus = False
+        c._as_used = getattr(c, "_as_used", False)
         lam = self.lam(c)
         bonus_used = False
         downed = [x for x in self.allies(c) if not x.dead and x.hp <= 0]
@@ -1367,6 +1467,9 @@ class Battle:
             elif self.ed == "2024" and c.resources.get("lay_on_hands", 0) > 0:
                 self.lay_on_hands(c, downed[0])
                 bonus_used = True
+            elif c.resources.get("healing_light", 0) > 0:
+                self.healing_light(c, downed[0])
+                bonus_used = True
         # 2) Rage (bonus action) when an enemy is close enough to matter.
         if not bonus_used and c.cls == "barbarian" and not c.raging and c.resources.get("rage", 0) > 0:
             near = any(f.up and self.dist(c, f) <= c.speed * 2 + 5 for f in self.foes(c))
@@ -1375,6 +1478,9 @@ class Battle:
                 c.raging = 10
                 bonus_used = True
                 self.log(f"{c.name} rages")
+        # 2b) Subclass bonus-action features.
+        if not bonus_used:
+            bonus_used = self.subclass_bonus(c, lam)
         # 3) Pre-action bonus spells (Hex, Hunter's Mark, Spiritual Weapon...) when worth it.
         if not bonus_used:
             opts = [o for o in self.pc_options(c, "bonus") if o[0] > 1.5]
@@ -1394,7 +1500,21 @@ class Battle:
                 self.log(f"{c.name} uses Preserve Life")
                 self.end_of_action_bonus(c, bonus_used)
                 return
-        if c.cls == "paladin" and c.resources.get("channel_divinity", 0) > 0 and not getattr(c, "sacred", 0) \
+        if c.cls == "cleric" and c.resources.get("channel_divinity", 0) > 0 and c.features.get("twilight_sanctuary") \
+                and not c.twilight and lam < 5 and any(f.up for f in self.foes(c)):
+            self.spend(c, "channel_divinity")
+            c.twilight = 10
+            self.log(f"{c.name} uses Twilight Sanctuary")
+            self.end_of_action_bonus(c, bonus_used)
+            return
+        if c.cls == "paladin" and c.features.get("vow_of_enmity") and c.resources.get("channel_divinity", 0) > 0 \
+                and (c.vow_target is None or not c.vow_target.up) and lam < 5:
+            foes = [x for x in self.foes(c) if x.up and self.dist(c, x) <= c.speed + 10]
+            if foes:
+                self.spend(c, "channel_divinity")
+                c.vow_target = max(foes, key=self.threat)
+                self.log(f"{c.name} swears a Vow of Enmity against {c.vow_target.name}")
+        if c.cls == "paladin" and c.features.get("sacred_weapon") and c.resources.get("channel_divinity", 0) > 0 and not getattr(c, "sacred", 0) \
                 and lam < 4 and any(f.up and self.dist(c, f) <= 35 for f in self.foes(c)):
             self.spend(c, "channel_divinity")
             c.sacred = max(1, c.features.get("sacred_weapon", 1))
@@ -1433,12 +1553,70 @@ class Battle:
                 return
         # 7) Main action: best value after weighing resource cost.
         self.main_action(c)
+        if c.features.get("dread_ambusher") and self.ed == "2014" and not getattr(c, "_da_done", False) and c.actions:
+            c._da_done = True
+            p = self.plan_for(c, c.actions[0])
+            if p:
+                c._da_bonus = True
+                self.execute(c, p[1], p[2], p[3])
+                c._da_bonus = False
         # 8) Fighter Action Surge.
         if c.resources.get("action_surge", 0) > 0 and any(f.up for f in self.foes(c)) and self.lam(c) < 4:
             self.spend(c, "action_surge")
             self.log(f"{c.name} uses Action Surge")
             self.main_action(c)
         self.end_of_action_bonus(c, bonus_used)
+
+    def healing_light(self, c, tgt):
+        k = min(c.features.get("healing_light_max", 1), c.resources["healing_light"])
+        self.spend(c, "healing_light", k)
+        self.heal(tgt, roll(self.rng, f"{k}d6"), c)
+        self.log(f"{c.name} uses Healing Light on {tgt.name}")
+
+    def subclass_bonus(self, c, lam):
+        """Bonus-action subclass features used at the start of a turn. Returns True if the bonus action was used."""
+        f, r = c.features, c.resources
+        foes = [x for x in self.foes(c) if x.up]
+        if not foes:
+            return False
+        near = any(self.dist(c, x) <= c.speed * 2 + 5 for x in foes)
+        if f.get("starry_archer") and not c.starry and r.get("wild_shape", 0) > 0 and (lam < 6 or self.round <= 1):
+            self.spend(c, "wild_shape")
+            c.starry = 10
+            self.log(f"{c.name} takes Starry Form (Archer)")
+            self.starry_shot(c)
+            return True
+        if r.get("bladesong", 0) > 0 and not any(e.get("name") == "Bladesong" for e in c.effects) and near:
+            self.spend(c, "bladesong")
+            eff = {"name": "Bladesong", "owner": c, "targets": [c], "rounds": 10, "kind": "buff"}
+            c.buffs.append(({"ac": f.get("bladesong_ac", 0)}, eff))
+            c.effects.append(eff)
+            self.log(f"{c.name} starts Bladesong")
+            return True
+        if r.get("hexblade_curse", 0) > 0 and (c.cursed is None or not c.cursed.up):
+            self.spend(c, "hexblade_curse")
+            c.cursed = max(foes, key=lambda x: (self.threat(x), x.hp))
+            self.log(f"{c.name} places Hexblade's Curse on {c.cursed.name}")
+            return True
+        if r.get("fighting_spirit", 0) > 0 and lam < 4 and any(self.dist(c, x) <= c.speed + 5 for x in foes):
+            self.spend(c, "fighting_spirit")
+            eff = {"name": "Fighting Spirit", "owner": c, "targets": [c], "rounds": 1, "kind": "buff"}
+            c.buffs.append(({"advantage_attacks": True}, eff))
+            c.effects.append(eff)
+            c.temp_hp = max(c.temp_hp, f.get("fighting_spirit_thp", 5))
+            self.log(f"{c.name} uses Fighting Spirit")
+            return True
+        return False
+
+    def starry_shot(self, c):
+        foes = [x for x in self.foes(c) if x.up and self.dist(c, x) <= 60 + c.speed]
+        t = self.pick_target(c, foes)
+        if not t:
+            return
+        self.move_toward(c, t, c.speed, 60)
+        a = {"name": "Starry Archer", "kind": "attack", "melee": False, "range": 60, "is_spell": True,
+             "attack_bonus": c.spell_attack, "damage": [{"dice": f"{c.features['starry_archer']}+{c.mods['wis']}", "type": "radiant"}]}
+        self.attack_roll(c, a, t, magical=True)
 
     def lay_on_hands(self, c, tgt):
         if self.dist(c, tgt) > c.speed + 5:
@@ -1464,6 +1642,20 @@ class Battle:
             return
         f = c.features
         foes_near = [x for x in self.foes(c) if x.up and self.dist(c, x) <= 5]
+        if c.starry:
+            self.starry_shot(c)
+            return
+        if c.resources.get("war_priest", 0) > 0 and foes_near and self.lam(c) < 5 and c.actions:
+            self.spend(c, "war_priest")
+            t = self.pick_target(c, foes_near)
+            self.log(f"{c.name} makes a War Priest attack")
+            self.attack_roll(c, c.actions[0], t, magical=c.magic_weapons)
+            return
+        if c.resources.get("healing_light", 0) > 0:
+            hurt = [x for x in self.allies(c) if not x.dead and x.hp < x.max_hp * 0.35]
+            if hurt:
+                self.healing_light(c, min(hurt, key=lambda x: x.hp / x.max_hp))
+                return
         # Spiritual Weapon-style recurring bonus attacks.
         for eff in c.effects:
             rec = eff.get("recurring")
@@ -1523,7 +1715,7 @@ def build_sides(edition, party_spec, monster_spec, item_effects):
             counts[label] = counts.get(label, 0) + 1
             if counts[label] > 1:
                 label = f"{label} #{counts[label]}"
-            party.append(make_pc(edition, p["cls"], int(p["level"]), label))
+            party.append(make_pc(edition, p["cls"], int(p["level"]), label, p.get("subclass")))
     enemies = []
     for m in monster_spec:
         base_name = data.raw(edition, "monsters")[m["index"]]["name"]

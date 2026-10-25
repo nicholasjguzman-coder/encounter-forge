@@ -12,6 +12,7 @@ import re
 
 from . import data
 from .classes import CLASSES
+from .subclasses import SUBCLASSES
 from .llm import chat_json
 
 # ------------------------------------------------------------------------------------------------
@@ -67,13 +68,14 @@ def parse_encounter(edition, text, meter):
     system = (
         "You are the Encounter Parser for a D&D combat simulator. " + DATA_FENCE +
         " Convert the description into JSON:\n"
-        '{"party": [{"cls": one of ' + json.dumps(CLASSES) + ', "level": 1-20, "count": int}],'
+        '{"party": [{"cls": one of ' + json.dumps(CLASSES) + ', "subclass": exact name from the subclass list or null, "level": 1-20, "count": int}],'
         ' "monsters": [{"index": exact id from the catalog, "count": int}],'
         ' "start_rounds": int 0-5 or null (rounds a speed-30 creature dashing needs to reach melee; 0 = already in melee),'
         ' "surprise": "none"|"party"|"monsters"|null (which side is surprised),'
         ' "unmatched": [names you could not match], "notes": short str}\n'
         "Pick the closest catalog monster for each creature (e.g. 'goblin archers' -> the goblin entry). "
         "Use only ids from the catalog. If the party is not described, return an empty party list.\n"
+        f"Subclasses by class: {json.dumps(SUBCLASSES[edition])}\n"
         f"Monster catalog for the {data.EDITIONS[edition]}: " + _monster_catalog(edition)
     )
     out = chat_json(f"parser:{edition}", system, fence(text), meter)
@@ -82,8 +84,10 @@ def parse_encounter(edition, text, meter):
     for p in out.get("party") or []:
         cls = str(p.get("cls", "")).lower()
         if cls in CLASSES:
+            sub = p.get("subclass")
             party.append({"cls": cls, "level": max(1, min(20, int(p.get("level") or 1))),
-                          "count": max(1, min(8, int(p.get("count") or 1)))})
+                          "count": max(1, min(8, int(p.get("count") or 1))),
+                          "subclass": sub if sub in SUBCLASSES[edition][cls] else None})
     monsters, dropped = [], list(out.get("unmatched") or [])
     for m in out.get("monsters") or []:
         idx = str(m.get("index", ""))
@@ -185,7 +189,8 @@ def tactician(edition, party, monsters, dm_notes, meter):
         "Low-intelligence beasts usually attack the nearest target; smart foes focus casters."
     )
     ids = {m["index"] for m in monsters}
-    user = (f"Monster ids: {sorted(ids)}\nEdition: {data.EDITIONS[edition]}\nParty: " + ", ".join(f"{p.get('count', 1)}x {p['cls']} {p['level']}" for p in party) +
+    user = (f"Monster ids: {sorted(ids)}\nEdition: {data.EDITIONS[edition]}\nParty: " + ", ".join(f"{p.get('count', 1)}x {p['cls']} {p['level']}" + (f" ({p['subclass']})" if p.get("subclass") else "")
+                                                    for p in party) +
             "\nMonsters:\n" + monster_summary(edition, monsters) + "\nDM notes:\n" + fence(dm_notes or "(none)"))
     out = chat_json(f"tactician:{edition}", system, user, meter)
     pick = lambda v, opts, d: v if v in opts else d

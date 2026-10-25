@@ -6,6 +6,7 @@ Spells come from a curated list of popular combat spells, filtered to what the e
 """
 import math
 
+from . import subclasses
 from .data import find_spell
 
 CLASSES = ["barbarian", "bard", "cleric", "druid", "fighter", "monk",
@@ -76,6 +77,8 @@ RESOURCE_WEIGHTS = {
     "rage": 1.5, "ki": 0.5, "action_surge": 2.0, "second_wind": 1.0, "lay_on_hands": 0.1,
     "channel_divinity": 2.0, "bardic_inspiration": 1.0, "sorcery_points": 0.5, "potion": 1.0,
     "item_charge": 1.0, "ammunition": 0.02, "hunters_mark_free": 1.0,
+    "superiority": 1.0, "war_priest": 1.0, "warding_flare": 0.5, "wild_shape": 1.5, "fighting_spirit": 1.0,
+    "hexblade_curse": 1.5, "healing_light": 0.3, "bladesong": 1.0, "portent": 1.5, "dread_ambusher": 1.0,
 }
 
 
@@ -103,7 +106,7 @@ def _weapon(name, dice, mod, bonus_hit, bonus_dmg, dtype, melee=True, rng=5):
             "targets": 1, "weapon": True}
 
 
-def build_pc(edition, cls, level, name=None):
+def build_pc(edition, cls, level, name=None, subclass=None):
     hd, primary, saves, caster, ac_tiers = CLASS_INFO[cls]
     pb, pm = prof_bonus(level), primary_mod(level)
     con = 2
@@ -248,13 +251,15 @@ def build_pc(edition, cls, level, name=None):
         f["spell_dc"] = 8 + pb + spell_mod
         f["spell_attack"] = pb + spell_mod
 
-    return {
+    pc = {
         "name": name or f"{cls.title()} {level}", "cls": cls, "level": level, "edition": edition,
         "hp": hp, "ac": ac, "speed": 40 if cls in ("monk",) and level >= 2 else 30,
         "saves": save_bonus, "mods": mods, "init": mods["dex"], "prof": pb,
         "attacks": attacks, "features": f, "resources": res,
         "slots": slots, "pact": pact, "spells": spells,
     }
+    subclasses.apply(pc, edition, subclass)
+    return pc
 
 
 def describe_build(pc):

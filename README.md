@@ -91,8 +91,15 @@ All models are called through Portkey (`gpt-5.6-luna`). **No model ever rolls di
   exceed the cap stops cleanly.
 - **Token logging.** Every call's input, cached-input and output tokens are logged to `logs/usage.jsonl` and shown in the app.
 
+### Subclasses
+Each party row has a **Subclass** column. The SRD subclass (Champion, Life, Evoker…) is the default. Popular
+official subclasses are also available (for example Battle Master, Assassin, Gloom Stalker, Light, Twilight,
+Hexblade, Bladesinging, Divination, Zealot, Vengeance). For these, the app includes only our own encoding of
+their combat mechanics in `dmsim/subclasses.py` (numbers and short labels), not rulebook text. Each edition's tab
+offers the subclasses that exist in that edition.
+
 ### Assumptions and simplifications
-- Quick-build PCs: primary ability 17 (+1 at levels 4 and 8), Con 14, typical armor, the SRD subclass, and a
+- Quick-build PCs: primary ability 17 (+1 at levels 4 and 8), Con 14, typical armor, the chosen subclass, and a
   curated list of popular combat spells. PCs have no magic items unless you list them.
 - One-dimensional positioning: the two sides start *N rounds of dashing* apart (about 60 ft per round).
   There is no terrain, cover or opportunity attacks.
@@ -107,6 +114,7 @@ All models are called through Portkey (`gpt-5.6-luna`). **No model ever rolls di
 app.py                 Streamlit UI (two tabs: 2014 and 2024 rules)
 dmsim/engine.py        Monte Carlo combat simulator
 dmsim/classes.py       Quick-build PCs for 12 classes, levels 1-20, both editions
+dmsim/subclasses.py    Subclass options and their mechanics
 dmsim/agents.py        Parser, Items & Effects, Tactician, Tuner, Explainer, safety guard
 dmsim/tuning.py        Closed tuning loop and target difficulty bands
 dmsim/compiler.py      Rules Compiler agent (offline)
@@ -126,3 +134,6 @@ Document 5.2 ("SRD 5.2") by Wizards of the Coast LLC, available at
 https://www.dndbeyond.com/srd. Both are licensed under the Creative Commons Attribution 4.0 International
 License (https://creativecommons.org/licenses/by/4.0/legalcode). Data was retrieved from the 5e SRD API
 (https://www.dnd5eapi.co).
+
+Dungeons & Dragons is a trademark of Wizards of the Coast. This is unofficial, non-commercial fan content.
+Non-SRD subclasses are represented only by our own simplified encoding of their game mechanics.

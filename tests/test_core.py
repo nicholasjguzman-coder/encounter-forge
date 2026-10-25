@@ -85,3 +85,21 @@ def test_item_slay_effect():
     slay = [{"applies_to": "party", "type": "slay", "vs_creature_type": "undead", "max_cr": 1, "uses": 2, "area": True}]
     boosted = simulate("2014", party, mons, Settings(edition="2014", item_effects=slay), n=200)
     assert boosted["hp_expended"] < base["hp_expended"]
+
+
+def test_every_subclass_builds_and_runs():
+    from dmsim.subclasses import SUBCLASSES
+    for ed, by_cls in SUBCLASSES.items():
+        for cls, subs in by_cls.items():
+            for sc in subs:
+                r = simulate(ed, [{"cls": cls, "level": 11, "count": 2, "subclass": sc}],
+                             [{"index": "ogre", "count": 2}], Settings(edition=ed), n=10)
+                assert 0 <= r["p_tpk"] <= 1
+
+
+def test_assassin_beats_thief_on_surprised_foes():
+    mons = [{"index": "ogre", "count": 3}]
+    s = Settings(edition="2014", start_rounds=0, surprise="monsters")
+    thief = simulate("2014", [{"cls": "rogue", "level": 7, "count": 4, "subclass": "Thief"}], mons, s, n=400)
+    assassin = simulate("2014", [{"cls": "rogue", "level": 7, "count": 4, "subclass": "Assassin"}], mons, s, n=400)
+    assert assassin["avg_rounds"] < thief["avg_rounds"]

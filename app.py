@@ -11,6 +11,7 @@ import streamlit as st
 
 from dmsim import agents, data
 from dmsim.classes import CLASSES, build_pc, describe_build
+from dmsim.subclasses import NOTES as SUB_NOTES, SUBCLASSES, subclass_level
 from dmsim.engine import Settings, Tactics, simulate
 from dmsim.llm import MODEL, BudgetExceeded, Meter
 from dmsim.tuning import TARGETS, distance, on_target, tune
@@ -33,6 +34,7 @@ div[data-testid="stMetricLabel"] p { font-size: .82rem; color: #c8bba8; }
 TIER_COLORS = {"Trivial": GREY, "Easy": GREEN, "Medium": GOLD, "Hard": "#d07a2d", "Deadly": RED, "Beyond Deadly": "#7a1f1f",
                "Below Low": GREY, "Low": GREEN, "Moderate": GOLD, "High": "#d07a2d", "Above High": RED}
 DEFAULT_PARTY = [("fighter", 5, 1), ("cleric", 5, 1), ("wizard", 5, 1), ("rogue", 5, 1)]
+DEFAULT_SUB = "Default (SRD)"
 DEFAULT_MONSTERS = {"2014": [("Ogre", 2), ("Goblin", 4)], "2024": [("Ogre", 2), ("Goblin Warrior", 4)]}
 
 
@@ -137,7 +139,8 @@ def render(edition):
                     parsed = agents.parse_encounter(E, clean, meter)
                 if parsed["party"]:
                     st.session_state[f"{E}_party_df"] = pd.DataFrame(
-                        [{"Class": p["cls"].title(), "Level": p["level"], "Count": p["count"]} for p in parsed["party"]])
+                        [{"Class": p["cls"].title(), "Subclass": p.get("subclass") or DEFAULT_SUB, "Level": p["level"],
+                          "Count": p["count"]} for p in parsed["party"]])
                 if parsed["monsters"]:
                     st.session_state[f"{E}_mon_df"] = pd.DataFrame(
                         [{"Monster": by_idx[m["index"]][0], "Count": m["count"]} for m in parsed["monsters"]])
@@ -166,21 +169,40 @@ def render(edition):
     c1, c2 = st.columns(2, gap="large")
     with c1:
         st.markdown("### 🧙 The party")
-        party_df = ss(f"{E}_party_df", pd.DataFrame([{"Class": c.title(), "Level": l, "Count": n} for c, l, n in DEFAULT_PARTY]))
+        party_df = ss(f"{E}_party_df", pd.DataFrame([{"Class": c.title(), "Subclass": DEFAULT_SUB, "Level": l, "Count": n}
+                                                     for c, l, n in DEFAULT_PARTY]))
+        sub_opts = [DEFAULT_SUB] + sorted({sc for subs in SUBCLASSES[E].values() for sc in subs})
         party_df = st.data_editor(
             party_df, key=f"{E}_party_{v}", num_rows="dynamic", width="stretch", hide_index=True,
             column_config={
                 "Class": st.column_config.SelectboxColumn(options=[c.title() for c in CLASSES], required=True),
+                "Subclass": st.column_config.SelectboxColumn(options=sub_opts, default=DEFAULT_SUB,
+                                                             help="Pick one that belongs to the row's class"),
                 "Level": st.column_config.NumberColumn(min_value=1, max_value=20, step=1, required=True, default=5),
                 "Count": st.column_config.NumberColumn(min_value=1, max_value=8, step=1, required=True, default=1),
             })
-        party = [{"cls": str(r["Class"]).lower(), "level": int(r["Level"]), "count": int(r["Count"])}
-                 for _, r in party_df.dropna().iterrows() if str(r["Class"]).lower() in CLASSES]
+        party, bad = [], []
+        for _, r in party_df.fillna({"Subclass": DEFAULT_SUB}).dropna().iterrows():
+            cls = str(r["Class"]).lower()
+            if cls not in CLASSES:
+                continue
+            sub = r["Subclass"] if r["Subclass"] != DEFAULT_SUB else None
+            if sub and sub not in SUBCLASSES[E][cls]:
+                bad.append(f"{sub} isn't a {cls.title()} subclass")
+                sub = None
+            party.append({"cls": cls, "level": int(r["Level"]), "count": int(r["Count"]), "subclass": sub})
+        if bad:
+            st.warning("; ".join(bad) + ". Using the default subclass for those rows.")
+        st.caption("Subclasses: " + " · ".join(f"**{c.title()}** {', '.join(SUBCLASSES[E][c])}" for c in CLASSES))
         with st.expander("See the quick builds"):
             for p in party:
-                b = build_pc(E, p["cls"], p["level"])
-                st.markdown(f"**{p['cls'].title()} {p['level']}** ({b['features']['subclass']}) — {describe_build(b)}  \n"
-                            f"<span class='small'>Spells: {', '.join(s['name'] for s in b['spells']) or '—'}</span>",
+                b = build_pc(E, p["cls"], p["level"], subclass=p["subclass"])
+                sc = b["features"]["subclass"]
+                late = p["level"] < subclass_level(E, p["cls"])
+                st.markdown(f"**{p['cls'].title()} {p['level']}** ({sc}) — {describe_build(b)}  \n"
+                            + (f"<span class='small'>{SUB_NOTES[sc]}</span>  \n" if sc in SUB_NOTES else "")
+                            + (f"<span class='small'>Subclass features start at level {subclass_level(E, p['cls'])}.</span>  \n" if late else "")
+                            + f"<span class='small'>Spells: {', '.join(s['name'] for s in b['spells']) or '—'}</span>",
                             unsafe_allow_html=True)
     with c2:
         st.markdown("### 👹 The monsters")

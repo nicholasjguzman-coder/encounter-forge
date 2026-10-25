@@ -1,0 +1,56 @@
+[
+ {
+  "case": "4\u00d7 L1 vs 4 Goblins",
+  "official": "Deadly",
+  "tpk": 0.007,
+  "down": 0.617,
+  "multi": 0.154,
+  "res": 0.8436,
+  "hp": 0.27152499999999996
+ },
+ {
+  "case": "4\u00d7 L1 vs 1 Ogre",
+  "official": "Deadly",
+  "tpk": 0.049,
+  "down": 0.791,
+  "multi": 0.353,
+  "res": 0.4962,
+  "hp": 0.307025
+ },
+ {
+  "case": "4\u00d7 L3 vs 1 Owlbear",
+  "official": "Medium",
+  "tpk": 0.0,
+  "down": 0.327,
+  "multi": 0.03,
+  "res": 0.315047619047619,
+  "hp": 0.20559375
+ },
+ {
+  "case": "4\u00d7 L5 vs 2 Ogres + 4 Goblins",
+  "official": "Medium",
+  "tpk": 0.0,
+  "down": 0.026,
+  "multi": 0.0,
+  "res": 0.26332432432432434,
+  "hp": 0.14663815789473686
+ },
+ {
+  "case": "4\u00d7 L5 vs 1 Troll",
+  "official": "Easy",
+  "tpk": 0.0,
+  "down": 0.038,
+  "multi": 0.0,
+  "res": 0.17986486486486486,
+  "hp": 0.13830921052631578
+ },
+ {
+  "case": "4\u00d7 L5 vs Young Red Dragon",
+  "official": "Deadly",
+  "tpk": 0.943,
+  "down": 0.997,
+  "multi": 0.985,
+  "res": 0.2384864864864865,
+  "hp": 0.978546052631579
+ }
+]

@@ -152,9 +152,19 @@ def interpret_items(edition, text, combatant_names, meter):
                 events.append({"type": "clamped", "detail": f"{e.get('name', t)}: {t} {v} clamped to {CLAMPS[t]}."})
                 v = max(-CLAMPS[t], min(CLAMPS[t], v))
             e["value"] = v
-        if t == "damage_bonus" and not re.fullmatch(r"\d+(d\d+)?([+-]\d+)?", str(e.get("dice", "")).replace(" ", "")):
-            events.append({"type": "rejected_effect", "detail": f"Bad dice {e.get('dice')!r} ignored."})
-            continue
+        if t == "damage_bonus":
+            m = re.fullmatch(r"(?:(\d+)d(\d+))?([+-]?\d+)?", str(e.get("dice", "")).replace(" ", ""))
+            if not m or not any(m.groups()):
+                events.append({"type": "rejected_effect", "detail": f"Bad dice {e.get('dice')!r} ignored."})
+                continue
+            n, sides, flat = int(m.group(1) or 0), int(m.group(2) or 0), int(m.group(3) or 0)
+            # Cap item damage riders at 3 dice of up to d12, plus at most +3 flat.
+            n2, sides2, flat2 = min(n, 3), min(sides, 12), max(-3, min(3, flat))
+            if (n2, sides2, flat2) != (n, sides, flat):
+                events.append({"type": "clamped", "detail": f"{e.get('name', t)}: damage bonus {e['dice']} clamped."})
+            e["dice"] = (f"{n2}d{sides2}" if n2 else "") + (f"{flat2:+d}" if flat2 and n2 else (str(flat2) if flat2 else ""))
+            if not e["dice"]:
+                continue
         if t == "slay":
             e["max_cr"] = float(e.get("max_cr", 1) or 1)
             e["uses"] = max(1, min(5, int(e.get("uses", 1) or 1)))

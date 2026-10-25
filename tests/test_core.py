@@ -123,3 +123,19 @@ def test_custom_creature_example_and_fleeing_allies():
                  Settings(edition="2014", start_rounds=0, tactics=t, allies=[{"index": "riding-horse", "count": 2}]),
                  n=200, keep_logs=1)
     assert any("flees" in line for line in r["sample_log"])
+
+
+def test_item_damage_bonus_is_clamped(monkeypatch):
+    # The Items agent's output is checked by code: an absurd "+10" weapon is capped (+3 hit, +3 damage).
+    fake = {"effects": [{"applies_to": "Fighter 5", "type": "attack_bonus", "value": 10, "name": "+10 longsword"},
+                        {"applies_to": "Fighter 5", "type": "damage_bonus", "dice": "10", "name": "+10 longsword"},
+                        {"applies_to": "party", "type": "damage_bonus", "dice": "8d20+9", "name": "doom blade"},
+                        {"applies_to": "party", "type": "teleport_enemies_away", "name": "bad"}]}
+    monkeypatch.setattr(agents, "chat_json", lambda *a, **k: fake)
+    out = agents.interpret_items("2014", "whatever", ["Fighter 5"], None)
+    eff = {(e["name"], e["type"]): e for e in out["effects"]}
+    assert eff[("+10 longsword", "attack_bonus")]["value"] == 3
+    assert eff[("+10 longsword", "damage_bonus")]["dice"] == "3"
+    assert eff[("doom blade", "damage_bonus")]["dice"] == "3d12+3"
+    assert not any(e["type"] == "teleport_enemies_away" for e in out["effects"])
+    assert sum(ev["type"] == "clamped" for ev in out["events"]) == 3

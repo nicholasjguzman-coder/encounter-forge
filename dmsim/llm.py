@@ -64,7 +64,7 @@ class Meter:
         if t["calls"] >= self.max_calls:
             raise BudgetExceeded(f"Call limit reached ({self.max_calls} model calls this run).")
         if t["cost"] >= self.cap_usd:
-            raise BudgetExceeded(f"Spending cap reached ({t['cost']:.4f} of {self.cap_usd:.2f} USD).")
+            raise BudgetExceeded(f"Spending cap reached ({t['cost']:.4f} of {self.cap_usd:.3f} USD).")
 
 
 def client():

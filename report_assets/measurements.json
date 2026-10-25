@@ -1,0 +1,127 @@
+{
+ "compile": {
+  "calls": 1351,
+  "input": 2200131,
+  "cached": 1767294,
+  "output": 770168,
+  "cost": 8.464
+ },
+ "agents": {
+  "parser": {
+   "n": 8,
+   "input": 4724,
+   "cached": 0,
+   "output": 267,
+   "cost": 0.00858,
+   "seconds": 1.73
+  },
+  "items": {
+   "n": 7,
+   "input": 501,
+   "cached": 0,
+   "output": 371,
+   "cost": 0.00434,
+   "seconds": 3.89
+  },
+  "tactician": {
+   "n": 16,
+   "input": 443,
+   "cached": 0,
+   "output": 384,
+   "cost": 0.0044,
+   "seconds": 2.94
+  },
+  "explainer": {
+   "n": 15,
+   "input": 1264,
+   "cached": 0,
+   "output": 367,
+   "cost": 0.00525,
+   "seconds": 2.51
+  },
+  "tuner": {
+   "n": 18,
+   "input": 4722,
+   "cached": 3387,
+   "output": 358,
+   "cost": 0.00567,
+   "seconds": 3.45
+  },
+  "compiler:custom": {
+   "n": 4,
+   "input": 1850,
+   "cached": 890,
+   "output": 618,
+   "cost": 0.00749,
+   "seconds": 2.5
+  }
+ },
+ "tuner_cache": {
+  "first_calls_cached_0": [
+   0.0151575,
+   0.0089675,
+   0.01006625,
+   0.00991625
+  ],
+  "cached_calls": [
+   [
+    4687,
+    4351,
+    0.00394
+   ],
+   [
+    4753,
+    4351,
+    0.00273
+   ],
+   [
+    4622,
+    4351,
+    0.0044
+   ],
+   [
+    4687,
+    4351,
+    0.00303
+   ],
+   [
+    4657,
+    4351,
+    0.00529
+   ]
+  ]
+ },
+ "prices": [
+  1.25,
+  0.125,
+  10.0
+ ],
+ "n_tradeoff": {
+  "100": {
+   "mean_p_down": 0.13,
+   "sd_across_seeds": 0.0454,
+   "seconds": 0.45
+  },
+  "200": {
+   "mean_p_down": 0.133,
+   "sd_across_seeds": 0.0295,
+   "seconds": 0.88
+  },
+  "500": {
+   "mean_p_down": 0.142,
+   "sd_across_seeds": 0.0113,
+   "seconds": 2.19
+  },
+  "1000": {
+   "mean_p_down": 0.142,
+   "sd_across_seeds": 0.0089,
+   "seconds": 4.35
+  },
+  "2000": {
+   "mean_p_down": 0.143,
+   "sd_across_seeds": 0.0094,
+   "seconds": 8.75
+  }
+ },
+ "turns_per_fight": 22.9
+}

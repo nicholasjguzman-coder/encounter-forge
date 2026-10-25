@@ -213,7 +213,7 @@ with st.sidebar:
     n_sims = st.select_slider("Simulated fights per run", options=[200, 500, 1000, 2000], value=1000)
     use_ai = st.toggle("Use AI agents", value=True,
                        help="Turn off to run with rules only (no model calls). The numbers always come from the simulator, never the model.")
-    cap = st.number_input("Spending cap per run (USD)", min_value=0.01, max_value=2.0, value=0.25, step=0.05,
+    cap = st.number_input("Spending cap per run (USD)", min_value=0.001, max_value=2.0, value=0.25, step=0.05, format="%.3f",
                           help="Every model call is metered; the run stops cleanly if the cap would be exceeded.")
     st.divider()
     usage_box = st.empty()

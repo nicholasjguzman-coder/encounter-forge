@@ -1,0 +1,448 @@
+"""Encounter Forge - a D&D 5e / 5.5e encounter playtester.
+
+Run:  streamlit run app.py
+"""
+import json
+import time
+
+import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
+
+from dmsim import agents, data
+from dmsim.classes import CLASSES, build_pc, describe_build
+from dmsim.engine import Settings, Tactics, simulate
+from dmsim.llm import MODEL, BudgetExceeded, Meter
+from dmsim.tuning import TARGETS, distance, on_target, tune
+
+st.set_page_config(page_title="Encounter Forge", page_icon="⚔️", layout="wide")
+
+GOLD, RED, GREEN, GREY = "#c9a227", "#b33a3a", "#4f8a5b", "#8a8077"
+st.markdown("""
+<style>
+h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; letter-spacing: .3px; }
+.block-container { padding-top: 1.6rem; max-width: 1250px; }
+div[data-testid="stMetric"] { background: #221c18; border: 1px solid #3a2f27; border-radius: 10px; padding: 10px 14px; }
+div[data-testid="stMetricLabel"] p { font-size: .82rem; color: #c8bba8; }
+.tier { display:inline-block; padding: 4px 12px; border-radius: 14px; font-weight: 600; margin-right: 8px; }
+.small { color: #a89a87; font-size: .85rem; }
+.safety { border-left: 3px solid #c9a227; padding: 6px 10px; background: #221c18; margin: 4px 0; border-radius: 4px; }
+</style>
+""", unsafe_allow_html=True)
+
+TIER_COLORS = {"Trivial": GREY, "Easy": GREEN, "Medium": GOLD, "Hard": "#d07a2d", "Deadly": RED, "Beyond Deadly": "#7a1f1f",
+               "Below Low": GREY, "Low": GREEN, "Moderate": GOLD, "High": "#d07a2d", "Above High": RED}
+DEFAULT_PARTY = [("fighter", 5, 1), ("cleric", 5, 1), ("wizard", 5, 1), ("rogue", 5, 1)]
+DEFAULT_MONSTERS = {"2014": [("Ogre", 2), ("Goblin", 4)], "2024": [("Ogre", 2), ("Goblin Warrior", 4)]}
+
+
+# ------------------------------------------------------------------------------------------------
+def ss(key, default):
+    if key not in st.session_state:
+        st.session_state[key] = default
+    return st.session_state[key]
+
+
+def session_usage():
+    return ss("usage", [])
+
+
+def record_meter(meter):
+    session_usage().extend(meter.calls)
+
+
+def tier_badge(name):
+    return f'<span class="tier" style="background:{TIER_COLORS.get(name, GREY)};color:#fff">{name}</span>'
+
+
+def simulated_tier(r):
+    if r["p_tpk"] > TARGETS["Deadly"]["max_tpk"]:
+        return "Beyond Deadly"
+    return min(TARGETS, key=lambda k: (distance(r, TARGETS[k]), list(TARGETS).index(k)))
+
+
+def monster_maps(edition):
+    names = data.monster_names(edition)
+    by_name = {n: i for n, i, _ in names}
+    labels = [f"{n}" for n, _, _ in names]
+    return by_name, labels, {i: (n, cr) for n, i, cr in names}
+
+
+def pct(x):
+    return f"{x * 100:.0f}%" if x >= 0.01 or x == 0 else "<1%"
+
+
+# ------------------------------------------------------------------------------------------------
+# Sidebar
+# ------------------------------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("## ⚔️ Encounter Forge")
+    st.caption("Playtest a D&D combat thousands of times before your players ever see it.")
+    n_sims = st.select_slider("Simulated fights per run", options=[200, 500, 1000, 2000], value=1000)
+    use_ai = st.toggle("Use AI agents", value=True,
+                       help="Turn off to run with rules only (no model calls). The numbers always come from the simulator, never the model.")
+    cap = st.number_input("Spending cap per run (USD)", min_value=0.01, max_value=2.0, value=0.25, step=0.05,
+                          help="Every model call is metered; the run stops cleanly if the cap would be exceeded.")
+    st.divider()
+    usage_box = st.empty()
+    st.divider()
+    with st.expander("How it works"):
+        st.markdown(
+            "1. **Encounter Parser** (AI) turns a plain-English description into a party and monster list.\n"
+            "2. **Items & Effects** (AI) converts magic items into checked, capped modifiers.\n"
+            "3. **Tactician** (AI) decides how each side fights.\n"
+            "4. **Simulator** (code) plays the fight out many times: real dice, every stat-block action, "
+            "spells, conditions, concentration, legendary actions, death saves.\n"
+            "5. **Explainer** (AI) briefs you; **Tuner** (AI) proposes changes and the simulator re-checks them.\n\n"
+            "Rules data: SRD 5.1 (2014) and SRD 5.2 (2024), CC-BY-4.0, compiled once into a combat schema by the "
+            "**Rules Compiler** agent.")
+    with st.expander("Assumptions"):
+        st.markdown(
+            "- Quick-build PCs: primary stat 17 (+1 at levels 4 and 8), Con 14, typical armor, the SRD subclass, "
+            "popular combat spells. No magic items unless you list them.\n"
+            "- Positioning is a single line: the two sides start a set number of rounds apart. "
+            "No terrain, cover or opportunity attacks.\n"
+            "- Area spells hit the number of targets from the DMG *Targets in Areas of Effect* table.\n"
+            "- PCs start with full resources. **Resources used** weighs each spell slot by its level plus class "
+            "features, potions and item charges (Hit Dice excluded). **HP expended** is reported separately.\n"
+            "- A **TPK** means every PC is at 0 HP or dead at the same time.")
+
+
+# ------------------------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------------------------
+st.markdown("# ⚔️ Encounter Forge")
+st.markdown('<span class="small">Will this fight kill my party? Simulate it, read the odds, and tune it to the difficulty you want.</span>',
+            unsafe_allow_html=True)
+
+tabs = st.tabs([f"🐉 {data.EDITIONS['2014']}", f"🛡️ {data.EDITIONS['2024']}"])
+
+
+def render(edition):
+    E = edition
+    by_name, labels, by_idx = monster_maps(E)
+    v = ss(f"{E}_v", 0)  # bump to reset widgets after the parser fills the form
+
+    # ---- 1. Describe -------------------------------------------------------------------------
+    with st.expander("✍️ Describe the encounter in plain English (optional)", expanded=False):
+        desc = st.text_area("Description", key=f"{E}_desc", height=90, label_visibility="collapsed",
+                            placeholder="e.g. Four level-3 adventurers (paladin, ranger, bard, warlock) stumble into a "
+                                        "bugbear and four goblins about 90 feet away in a dark forest; the goblins have the drop on them.")
+        if st.button("Fill in the form", key=f"{E}_parse", disabled=not use_ai):
+            clean, events = agents.guard_text(desc, "description")
+            ss(f"{E}_safety", []).extend(events)
+            meter = Meter(cap_usd=cap, label=f"parse-{int(time.time())}")
+            try:
+                with st.spinner("Encounter Parser is reading your description..."):
+                    parsed = agents.parse_encounter(E, clean, meter)
+                if parsed["party"]:
+                    st.session_state[f"{E}_party_df"] = pd.DataFrame(
+                        [{"Class": p["cls"].title(), "Level": p["level"], "Count": p["count"]} for p in parsed["party"]])
+                if parsed["monsters"]:
+                    st.session_state[f"{E}_mon_df"] = pd.DataFrame(
+                        [{"Monster": by_idx[m["index"]][0], "Count": m["count"]} for m in parsed["monsters"]])
+                if parsed["start_rounds"] is not None:
+                    st.session_state[f"{E}_dist_init"] = parsed["start_rounds"]
+                if parsed["surprise"]:
+                    st.session_state[f"{E}_surprise_init"] = parsed["surprise"]
+                st.session_state[f"{E}_v"] = v + 1
+                st.session_state[f"{E}_parse_note"] = parsed
+            except BudgetExceeded as e:
+                st.error(str(e))
+            finally:
+                record_meter(meter)
+            st.rerun()
+        note = st.session_state.get(f"{E}_parse_note")
+        if note:
+            msg = note.get("notes") or "Form filled from your description."
+            if note.get("unmatched"):
+                msg += f"  Couldn't match: {', '.join(note['unmatched'])}."
+            st.info(msg)
+        if any(e["field"] == "description" for e in st.session_state.get(f"{E}_safety", [])):
+            st.markdown('<div class="safety">🛡️ Some instruction-like text was removed from your description before the AI read it.</div>',
+                        unsafe_allow_html=True)
+
+    # ---- 2. Party & monsters -----------------------------------------------------------------
+    c1, c2 = st.columns(2, gap="large")
+    with c1:
+        st.markdown("### 🧙 The party")
+        party_df = ss(f"{E}_party_df", pd.DataFrame([{"Class": c.title(), "Level": l, "Count": n} for c, l, n in DEFAULT_PARTY]))
+        party_df = st.data_editor(
+            party_df, key=f"{E}_party_{v}", num_rows="dynamic", width="stretch", hide_index=True,
+            column_config={
+                "Class": st.column_config.SelectboxColumn(options=[c.title() for c in CLASSES], required=True),
+                "Level": st.column_config.NumberColumn(min_value=1, max_value=20, step=1, required=True, default=5),
+                "Count": st.column_config.NumberColumn(min_value=1, max_value=8, step=1, required=True, default=1),
+            })
+        party = [{"cls": str(r["Class"]).lower(), "level": int(r["Level"]), "count": int(r["Count"])}
+                 for _, r in party_df.dropna().iterrows() if str(r["Class"]).lower() in CLASSES]
+        with st.expander("See the quick builds"):
+            for p in party:
+                b = build_pc(E, p["cls"], p["level"])
+                st.markdown(f"**{p['cls'].title()} {p['level']}** ({b['features']['subclass']}) — {describe_build(b)}  \n"
+                            f"<span class='small'>Spells: {', '.join(s['name'] for s in b['spells']) or '—'}</span>",
+                            unsafe_allow_html=True)
+    with c2:
+        st.markdown("### 👹 The monsters")
+        mon_df = ss(f"{E}_mon_df", pd.DataFrame([{"Monster": n, "Count": k} for n, k in DEFAULT_MONSTERS[E]]))
+        mon_df = st.data_editor(
+            mon_df, key=f"{E}_mon_{v}", num_rows="dynamic", width="stretch", hide_index=True,
+            column_config={
+                "Monster": st.column_config.SelectboxColumn(options=labels, required=True),
+                "Count": st.column_config.NumberColumn(min_value=1, max_value=20, step=1, required=True, default=1),
+            })
+        monsters = [{"index": by_name[r["Monster"]], "count": int(r["Count"])}
+                    for _, r in mon_df.dropna().iterrows() if r["Monster"] in by_name]
+        if monsters:
+            st.caption(" · ".join(f"{m['count']}× {by_idx[m['index']][0]} (CR {by_idx[m['index']][1]})" for m in monsters))
+
+    # ---- 3. Conditions ----------------------------------------------------------------------
+    st.markdown("### 🗺️ Battlefield & extras")
+    d1, d2 = st.columns([1, 1], gap="large")
+    with d1:
+        start_rounds = st.slider("Starting distance (rounds of dashing for a speed-30 creature)", 0, 5,
+                                 ss(f"{E}_dist_init", 1), key=f"{E}_dist_{v}",
+                                 help="0 = already in melee. Each round is about 60 feet.")
+        st.caption(f"≈ {max(5, start_rounds * 60)} feet apart")
+        sur_opts = {"none": "No surprise", "party": "The party is surprised", "monsters": "The monsters are surprised"}
+        surprise = st.radio("Surprise", list(sur_opts), format_func=sur_opts.get, horizontal=True,
+                            index=list(sur_opts).index(ss(f"{E}_surprise_init", "none")), key=f"{E}_sur_{v}")
+        st.caption("2014: surprised creatures lose their first turn. 2024: surprised creatures roll initiative with disadvantage.")
+    with d2:
+        items_text = st.text_area("Magic items or effects in play (optional)", key=f"{E}_items", height=80,
+                                  placeholder="e.g. Fighter has a +1 longsword; the cleric's mace destroys undead of CR 1 or lower "
+                                              "(3 charges); the party carries 3 potions of healing.")
+        tactics_text = st.text_area("Tactics notes (optional)", key=f"{E}_tactics", height=68,
+                                    placeholder="e.g. The goblins flee when the bugbear dies; the cultists focus the healer.")
+
+    run = st.button("🎲 Run the playtest", type="primary", key=f"{E}_run", disabled=not (party and monsters))
+    if run:
+        run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text)
+    res = st.session_state.get(f"{E}_result")
+    if res:
+        show_results(E, res)
+
+
+def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text):
+    meter = Meter(cap_usd=cap, label=f"run-{int(time.time())}")
+    safety = []
+    tactics = {"monster_targeting": "random", "finish_downed": False, "flee_at": 0.0, "per_monster": {},
+               "party_targeting": "focus_weakest", "resource_policy": "balanced", "rationale": "Default tactics (AI off)."}
+    items = {"effects": [], "ignored": [], "notes": "", "events": []}
+    status = st.status("Running the playtest...", expanded=True)
+    try:
+        if use_ai:
+            if items_text.strip():
+                clean, ev = agents.guard_text(items_text, "magic items")
+                safety += ev
+                status.write("🪄 Items & Effects agent is reading your magic items...")
+                names = []
+                for p in party:
+                    for k in range(p["count"]):
+                        nm = f"{p['cls'].title()} {p['level']}"
+                        names.append(nm if k == 0 else f"{nm} #{k + 1}")
+                items = agents.interpret_items(E, clean, names, meter)
+                safety += items["events"]
+            clean_t, ev = agents.guard_text(tactics_text, "tactics notes")
+            safety += ev
+            status.write("🧠 Tactician is deciding how each side fights...")
+            tactics = agents.tactician(E, party, monsters, clean_t, meter)
+        settings = Settings(edition=E, start_rounds=start_rounds, surprise=surprise,
+                            tactics=Tactics(**{k: v for k, v in tactics.items() if k != "rationale"}),
+                            item_effects=items["effects"])
+        status.write(f"🎲 Simulating {n_sims:,} fights...")
+        t0 = time.time()
+        r = simulate(E, party, monsters, settings, n=n_sims)
+        sim_s = time.time() - t0
+        official = data.official_difficulty(E, [p["level"] for p in party for _ in range(p["count"])],
+                                            [data.monster_base(E, m["index"])["xp"] for m in monsters for _ in range(m["count"])])
+        approx = agents.approximations(E, monsters)
+        briefing = ""
+        if use_ai:
+            status.write("📜 Explainer is writing your briefing...")
+            briefing = agents.explain(E, party, monsters, r, official, tactics, approx, meter)
+        status.update(label=f"Done: {n_sims:,} fights in {sim_s:.1f}s", state="complete", expanded=False)
+    except BudgetExceeded as e:
+        status.update(label="Stopped: spending cap reached", state="error")
+        safety.append({"field": "budget", "type": "budget_cap", "detail": str(e)})
+        st.error(f"🛡️ {e} The run was stopped before spending more.")
+        record_meter(meter)
+        return
+    except Exception as e:
+        status.update(label="Something went wrong", state="error")
+        st.exception(e)
+        record_meter(meter)
+        return
+    record_meter(meter)
+    st.session_state[f"{E}_result"] = {
+        "party": party, "monsters": monsters, "start_rounds": start_rounds, "surprise": surprise,
+        "results": r, "official": official, "tactics": tactics, "items": items, "approx": approx,
+        "briefing": briefing, "safety": safety, "meter": meter.calls, "settings": settings, "tuning": None, "sim_s": sim_s,
+    }
+
+
+def metric_row(r):
+    cols = st.columns(6)
+    cols[0].metric("TPK chance", pct(r["p_tpk"]), help="Every PC at 0 HP or dead at the same time")
+    cols[1].metric("1+ PCs at 0 HP", pct(r["p_any_down"]), help="Chance at least one PC drops to 0 HP during the fight")
+    cols[2].metric("2+ PCs at 0 HP", pct(r["p_multi_down"]), help="Chance two or more different PCs drop to 0 HP")
+    cols[3].metric("Resources used", pct(r["resources_used"]), help="Spell slots (weighted by level), class features, potions and item charges. HP not included.")
+    cols[4].metric("HP expended", pct(r["hp_expended"]), help="Share of the party's total HP missing when the fight ends")
+    cols[5].metric("Avg. rounds", f"{r['avg_rounds']:.1f}")
+
+
+def show_results(E, R):
+    r, off = R["results"], R["official"]
+    st.divider()
+    st.markdown("## 📊 Results")
+    tier = simulated_tier(r)
+    st.markdown(
+        f"Simulated difficulty: {tier_badge(tier)} &nbsp; Official XP rating: {tier_badge(off['rating'])}"
+        f"<span class='small'>{off['basis']}: {off['adjusted_xp']:,.0f} XP vs thresholds "
+        + ", ".join(f"{k} {v:,}" for k, v in off["thresholds"].items()) + "</span>", unsafe_allow_html=True)
+    st.write("")
+    metric_row(r)
+    st.caption(f"Based on {r['n']:,} simulated fights · party wins {pct(r['p_victory'])} · any PC dies {pct(r['p_any_death'])}"
+               + (f" · stalemate {pct(r['p_stalemate'])}" if r["p_stalemate"] > 0.005 else ""))
+
+    left, right = st.columns([1.15, 1], gap="large")
+    with left:
+        if R["briefing"]:
+            st.markdown("#### 📜 The Explainer's briefing")
+            st.markdown(R["briefing"])
+        st.markdown("#### Who is in danger?")
+        names = list(r["pcs"])
+        fig = go.Figure()
+        fig.add_bar(y=names, x=[r["pcs"][n]["p_dropped"] for n in names], orientation="h", name="Drops to 0 HP",
+                    marker_color=GOLD, text=[pct(r["pcs"][n]["p_dropped"]) for n in names], textposition="outside")
+        fig.add_bar(y=names, x=[r["pcs"][n]["p_died"] for n in names], orientation="h", name="Dies",
+                    marker_color=RED, text=[pct(r["pcs"][n]["p_died"]) for n in names], textposition="outside")
+        fig.update_layout(barmode="group", height=60 + 55 * len(names), margin=dict(l=0, r=30, t=10, b=0),
+                          xaxis=dict(tickformat=".0%", range=[0, 1.1]), paper_bgcolor="rgba(0,0,0,0)",
+                          plot_bgcolor="rgba(0,0,0,0)", font_color="#efe6d8", legend=dict(orientation="h", y=-0.15))
+        st.plotly_chart(fig, width="stretch")
+    with right:
+        st.markdown("#### How long do fights last?")
+        hist = pd.Series(r["rounds_hist"]).value_counts().sort_index()
+        fig2 = go.Figure(go.Bar(x=hist.index, y=hist.values / r["n"], marker_color=GOLD))
+        fig2.update_layout(height=210, margin=dict(l=0, r=0, t=10, b=0), xaxis_title="Rounds",
+                           yaxis=dict(tickformat=".0%"), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                           font_color="#efe6d8")
+        st.plotly_chart(fig2, width="stretch")
+        st.markdown("#### Monsters defeated")
+        mk = r["monsters"]
+        st.dataframe(pd.DataFrame([{"Monster": k, "Defeated in": pct(v["p_killed"])} for k, v in mk.items()]),
+                     hide_index=True, width="stretch", height=min(250, 38 + 35 * len(mk)))
+
+    with st.expander("🧠 Tactics, items and approximations"):
+        t = R["tactics"]
+        st.markdown(f"**Tactician:** monsters target *{t['monster_targeting'].replace('_', ' ')}*, "
+                    f"{'attack downed PCs' if t['finish_downed'] else 'ignore downed PCs'}, "
+                    f"{'flee at ' + pct(t['flee_at']) + ' HP' if t['flee_at'] else 'fight to the death'}; "
+                    f"party targets *{t['party_targeting'].replace('_', ' ')}* and plays *{t['resource_policy']}* with resources.  \n"
+                    + "".join(f"*{monster_maps(E)[2].get(i, (i,))[0]}*: " + ", ".join(
+                        f"{k.replace('_', ' ')} {pct(v) if k == 'flee_at' else str(v).replace('_', ' ')}" for k, v in cfg.items()) + "  \n"
+                        for i, cfg in t.get("per_monster", {}).items())
+                    + f"<span class='small'>{t['rationale']}</span>", unsafe_allow_html=True)
+        if R["items"]["effects"]:
+            st.markdown("**Items & effects applied:**")
+            for e in R["items"]["effects"]:
+                details = {k: v for k, v in e.items() if k not in ("applies_to", "type", "name")}
+                st.markdown(f"- {e.get('name', e['type'])} → *{e['applies_to']}*: `{e['type']}` {json.dumps(details) if details else ''}")
+        if R["items"]["ignored"]:
+            st.caption("No combat effect: " + "; ".join(map(str, R["items"]["ignored"])))
+        if R["approx"]:
+            st.markdown("**Approximated by the simulator:**")
+            for a in R["approx"][:15]:
+                st.markdown(f"- <span class='small'>{a}</span>", unsafe_allow_html=True)
+
+    with st.expander("🎬 Watch one simulated fight (turn-by-turn log)"):
+        st.code("\n".join(r["sample_log"]) or "(no log)", language=None)
+
+    if R["safety"]:
+        with st.expander(f"🛡️ Safety events ({len(R['safety'])})", expanded=True):
+            for e in R["safety"]:
+                st.markdown(f'<div class="safety"><b>{e["type"].replace("_", " ")}</b> — {e.get("field", "")}: {e["detail"]}</div>',
+                            unsafe_allow_html=True)
+
+    # ---- Tuning ------------------------------------------------------------------------------
+    st.markdown("### 🎯 Tune it")
+    t1, t2 = st.columns([1, 2])
+    with t1:
+        target_name = st.selectbox("Target difficulty", list(TARGETS), index=2, key=f"{E}_target")
+        tg = TARGETS[target_name]
+        st.caption(f"TPK ≤ {pct(tg['max_tpk'])}" + (f" and ≥ {pct(tg['min_tpk'])}" if tg.get("min_tpk") else "") +
+                   f"; chance a PC drops: {pct(tg['down_min'])}–{pct(tg['down_max'])}")
+        if on_target(r, tg):
+            st.success("Already on target.")
+        go_tune = st.button("🔧 Tune the encounter", key=f"{E}_tune", disabled=not use_ai or on_target(r, tg))
+    if go_tune:
+        meter = Meter(cap_usd=cap, label=f"tune-{int(time.time())}")
+        bar = st.progress(0.0, text="Tuner is proposing changes...")
+        try:
+            attempts = tune(E, R["party"], R["monsters"], R["settings"], r, target_name, tg, meter,
+                            progress=lambda i, n: bar.progress(i / n, text=f"Attempt {i} of {n}: proposing and re-simulating..."))
+        finally:
+            record_meter(meter)
+            bar.empty()
+        R["tuning"] = {"target": target_name, "attempts": attempts, "meter": meter.calls}
+        R["meter"] = R["meter"] + meter.calls
+    tun = R.get("tuning")
+    with t2:
+        if tun:
+            _, by_idx2 = None, monster_maps(E)[2]
+            rows = []
+            valid = [a for a in tun["attempts"] if "results" in a]
+            best = min(valid, key=lambda a: a["distance"])
+            for i, a in enumerate(valid):
+                rr = a["results"]
+                rows.append({
+                    "": "⭐" if a is best else "", "Version": "Original" if i == 0 else f"Attempt {i}",
+                    "Monsters": ", ".join(f"{m['count']}× {by_idx2[m['index']][0]}" for m in a["monsters"]),
+                    "Start": f"{a['start_rounds']} rd", "TPK": pct(rr["p_tpk"]), "≥1 down": pct(rr["p_any_down"]),
+                    "≥2 down": pct(rr["p_multi_down"]), "Resources": pct(rr["resources_used"]),
+                    "On target": "✅" if a["on_target"] else "—",
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+            for i, a in enumerate(valid[1:], 1):
+                st.markdown(f"<span class='small'><b>Attempt {i}:</b> {a.get('rationale', '')}</span>", unsafe_allow_html=True)
+            for a in tun["attempts"]:
+                if "error" in a:
+                    st.warning(f"🛡️ {a['error']}")
+            if best is not valid[0] and st.button("Use the ⭐ version", key=f"{E}_use_best"):
+                st.session_state[f"{E}_mon_df"] = pd.DataFrame(
+                    [{"Monster": by_idx2[m["index"]][0], "Count": m["count"]} for m in best["monsters"]])
+                st.session_state[f"{E}_dist_init"] = best["start_rounds"]
+                st.session_state[f"{E}_surprise_init"] = best["surprise"]
+                st.session_state[f"{E}_v"] = st.session_state.get(f"{E}_v", 0) + 1
+                st.session_state.pop(f"{E}_result", None)
+                st.rerun()
+
+    # ---- Token usage for this run -----------------------------------------------------------
+    with st.expander("🪙 Tokens & cost for this run"):
+        calls = R["meter"]
+        if not calls:
+            st.caption("No model calls (AI agents off).")
+        else:
+            df = pd.DataFrame(calls)
+            g = df.groupby("agent")[["input", "cached", "output", "cost", "seconds"]].sum().reset_index()
+            g["cost"] = g["cost"].map(lambda x: f"${x:.4f}")
+            g = g.rename(columns={"agent": "Agent", "input": "Input tokens", "cached": "Cached", "output": "Output tokens",
+                                  "cost": "Cost (USD)", "seconds": "Seconds"})
+            st.dataframe(g, hide_index=True, width="stretch")
+            st.caption(f"Total: {df['input'].sum():,} input ({df['cached'].sum():,} cached) + {df['output'].sum():,} output tokens · "
+                       f"\\${df['cost'].sum():.4f} · the simulation itself: {R['sim_s']:.1f}s of CPU and \\$0 in tokens")
+
+
+with tabs[0]:
+    render("2014")
+with tabs[1]:
+    render("2024")
+
+with usage_box.container():
+    use = session_usage()
+    tot = {k: sum(c[k] for c in use) for k in ("input", "cached", "output", "cost")}
+    st.markdown("**This session's model usage**")
+    st.caption(f"Model: `{MODEL}` via Portkey")
+    st.markdown(f"{len(use)} calls · {tot['input']:,} input ({tot['cached']:,} cached) · {tot['output']:,} output tokens  \n"
+                f"**\\${tot['cost']:.4f}** estimated")

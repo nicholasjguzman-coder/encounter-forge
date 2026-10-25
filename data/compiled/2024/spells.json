@@ -1,0 +1,8813 @@
+{
+ "alarm": {
+  "ability": {
+   "name": "Alarm",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "concentration": false,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat ward that alerts when creatures enter or touch the protected area."
+  }
+ },
+ "arcane-eye": {
+  "ability": {
+   "name": "Arcane Eye",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Invisible, invulnerable scouting eye provides remote visual information and darkvision."
+  }
+ },
+ "acid-splash": {
+  "ability": {
+   "name": "Acid Splash",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d6",
+     "type": "acid"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 5
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "animal-messenger": {
+  "ability": {
+   "name": "Animal Messenger",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Noncombat messaging spell; its Charisma save and travel effects are not modeled."
+  }
+ },
+ "animal-friendship": {
+  "ability": {
+   "name": "Animal Friendship",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 14400,
+    "save_ends": false,
+    "breaks_on_damage": true
+   },
+   "concentration": false,
+   "duration": 14400,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "arcane-lock": {
+  "ability": {
+   "name": "Arcane Lock",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat locking utility; lasts until dispelled."
+  }
+ },
+ "acid-arrow": {
+  "ability": {
+   "name": "Acid Arrow",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 90,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d4",
+     "type": "acid"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 2,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d4",
+      "type": "acid"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d4",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Misses deal half initial damage; later damage occurs at end of target's next turn."
+  }
+ },
+ "antimagic-field": {
+  "ability": {
+   "name": "Antimagic Field",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 10
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates an antimagic aura suppressing spells, magic items, teleportation, portals, and magical effects."
+  }
+ },
+ "animate-dead": {
+  "ability": {
+   "name": "Animate Dead",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1440,
+   "upcast": {
+    "extra_targets": 2,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons one skeleton or zombie; stat block and bonus-action commanding are not encoded."
+  }
+ },
+ "animal-shapes": {
+  "ability": {
+   "name": "Animal Shapes",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Transforms willing allies into CR 4 or lower beasts; temporary hit points depend on chosen form."
+  }
+ },
+ "antilife-shell": {
+  "ability": {
+   "name": "Antilife Shell",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 10
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "10-foot aura blocks non-Construct and non-Undead creatures from passing through or reaching through it."
+  }
+ },
+ "aid": {
+  "ability": {
+   "name": "Aid",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 1,
+   "damage": [],
+   "targets": 3,
+   "heal": "5",
+   "concentration": false,
+   "duration": 4800,
+   "upcast": {
+    "dice": "5",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates increased current and maximum Hit Points as 5 healing per target."
+  }
+ },
+ "arcane-sword": {
+  "ability": {
+   "name": "Arcane Sword",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 90,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d12",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "4d12",
+      "type": "force"
+     }
+    ],
+    "attack": true,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Sword attacks on casting and later turns as a bonus action; targets must be within 5 feet of the sword."
+  }
+ },
+ "augury": {
+  "ability": {
+   "name": "Augury",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides narrative omens about a planned course of action; no meaningful combat effect."
+  }
+ },
+ "antipathy-sympathy": {
+  "ability": {
+   "name": "Antipathy/Sympathy",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 120
+   },
+   "condition": {
+    "name": "frightened",
+    "duration": 14400,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models antipathy; sympathy instead charms targets and draws them toward the target."
+  }
+ },
+ "bless": {
+  "ability": {
+   "name": "Bless",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 3,
+   "buff": {
+    "attack_bonus": "1d4",
+    "save_bonus": "1d4",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "arcanists-magic-aura": {
+  "ability": {
+   "name": "Arcanist's Magic Aura",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Changes creature type or magical aura; no direct combat effect."
+  }
+ },
+ "bane": {
+  "ability": {
+   "name": "Bane",
+   "cost": "action",
+   "kind": "debuff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 3,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [],
+    "attack_penalty": "1d4",
+    "save_penalty": "1d4"
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "astral-projection": {
+  "ability": {
+   "name": "Astral Projection",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 9,
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Exploration and planar-travel spell with no meaningful combat effect."
+  }
+ },
+ "banishment": {
+  "ability": {
+   "name": "Banishment",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "banished",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "cha",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Targets are banished; extraplanar creatures may remain banished if concentration lasts the full minute."
+  }
+ },
+ "aura-of-life": {
+  "ability": {
+   "name": "Aura of Life",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 30
+   },
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "necrotic"
+    ]
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Aura resistance captured; hit point maximum protection and 1 HP revival are approximated."
+  }
+ },
+ "alter-self": {
+  "ability": {
+   "name": "Alter Self",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Natural weapons and aquatic adaptation are represented abstractly; appearance change has no combat effect."
+  }
+ },
+ "barkskin": {
+  "ability": {
+   "name": "Barkskin",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 17,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Sets target's AC to 17 if lower."
+  }
+ },
+ "animate-objects": {
+  "ability": {
+   "name": "Animate Objects",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d4+3",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "dice": "1d4",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons up to spellcasting modifier objects; sizes, number, and attacks vary."
+  }
+ },
+ "arcane-hand": {
+  "ability": {
+   "name": "Arcane Hand",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d8",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "5d8",
+      "type": "force"
+     }
+    ],
+    "attack": true,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "2d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models Clenched Fist; push, grapple, crush, and interposing modes omitted."
+  }
+ },
+ "beacon-of-hope": {
+  "ability": {
+   "name": "Beacon of Hope",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Advantage on Wisdom and death saves, plus maximum healing, approximated due to schema limits."
+  }
+ },
+ "befuddlement": {
+  "ability": {
+   "name": "Befuddlement",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d12",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "int",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Ongoing spellcasting restriction and 30-day repeat saves are not represented by available fields."
+  }
+ },
+ "burning-hands": {
+  "ability": {
+   "name": "Burning Hands",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 15
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "blade-barrier": {
+  "ability": {
+   "name": "Blade Barrier",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 90,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "6d10",
+     "type": "force"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 100
+   },
+   "concentration": true,
+   "duration": 100,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "6d10",
+      "type": "force"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents the straight wall; ringed wall, cover, difficult terrain, and once-per-turn limit are approximated."
+  }
+ },
+ "blight": {
+  "ability": {
+   "name": "Blight",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 30,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "8d8",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Plants automatically fail; nonmagical plants can be withered without a save."
+  }
+ },
+ "blindness-deafness": {
+  "ability": {
+   "name": "Blindness/Deafness",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "blinded",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Deafened choice is approximated as blinded because deafened is unavailable in the condition schema."
+  }
+ },
+ "black-tentacles": {
+  "ability": {
+   "name": "Black Tentacles",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 90,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "bludgeoning"
+    }
+   ],
+   "save": {
+    "ability": "str",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "str",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "3d6",
+      "type": "bludgeoning"
+     }
+    ],
+    "save": {
+     "ability": "str",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models repeated area saves; difficult terrain and Athletics escape are not represented."
+  }
+ },
+ "awaken": {
+  "ability": {
+   "name": "Awaken",
+   "cost": "none",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Eight-hour casting time and permanent transformation are not meaningfully modeled in combat."
+  }
+ },
+ "blur": {
+  "ability": {
+   "name": "Blur",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants attackers disadvantage; schema lacks a dedicated defense-disadvantage field."
+  }
+ },
+ "chain-lightning": {
+  "ability": {
+   "name": "Chain Lightning",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d8",
+     "type": "lightning"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 4,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "blink": {
+  "ability": {
+   "name": "Blink",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Intermittent ethereal defense and return teleportation are not directly represented."
+  }
+ },
+ "charm-monster": {
+  "ability": {
+   "name": "Charm Monster",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 600,
+    "save_ends": false,
+    "breaks_on_damage": true
+   },
+   "concentration": false,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Does not model advantage on the save when fighting or the target becoming friendly."
+  }
+ },
+ "chill-touch": {
+  "ability": {
+   "name": "Chill Touch",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d10",
+     "type": "necrotic"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Hit prevents target from regaining hit points until the end of the caster's next turn."
+  }
+ },
+ "call-lightning": {
+  "ability": {
+   "name": "Call Lightning",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d10",
+     "type": "lightning"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 5
+   },
+   "concentration": true,
+   "duration": 100,
+   "recurring": {
+    "trigger": "action",
+    "damage": [
+     {
+      "dice": "3d10",
+      "type": "lightning"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Storm-weather damage increase is not represented."
+  }
+ },
+ "clairvoyance": {
+  "ability": {
+   "name": "Clairvoyance",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5280,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates an invisible remote seeing or hearing sensor; no direct combat effect."
+  }
+ },
+ "charm-person": {
+  "ability": {
+   "name": "Charm Person",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 600,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": false,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "circle-of-death": {
+  "ability": {
+   "name": "Circle of Death",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "8d8",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "2d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "calm-emotions": {
+  "ability": {
+   "name": "Calm Emotions",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Suppresses charm or fright and can make hostile humanoids indifferent; effects lack direct schema representation."
+  }
+ },
+ "comprehend-languages": {
+  "ability": {
+   "name": "Comprehend Languages",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "No meaningful combat effect."
+  }
+ },
+ "commune": {
+  "ability": {
+   "name": "Commune",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides divine answers to questions; no direct combat effect."
+  }
+ },
+ "clone": {
+  "ability": {
+   "name": "Clone",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a delayed backup body; no immediate combat effect."
+  }
+ },
+ "color-spray": {
+  "ability": {
+   "name": "Color Spray",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 15
+   },
+   "condition": {
+    "name": "blinded",
+    "duration": 2,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "commune-with-nature": {
+  "ability": {
+   "name": "Commune with Nature",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides non-combat information about the surrounding natural area."
+  }
+ },
+ "cloudkill": {
+  "ability": {
+   "name": "Cloudkill",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d8",
+     "type": "poison"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 100,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d8",
+      "type": "poison"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Fog is heavily obscured and moves 10 feet away at the start of each caster turn."
+  }
+ },
+ "command": {
+  "ability": {
+   "name": "Command",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "incapacitated",
+    "duration": 1,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates varied commands as incapacitated; specific commands may instead move, drop, flee, or impose prone."
+  }
+ },
+ "cone-of-cold": {
+  "ability": {
+   "name": "Cone of Cold",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "8d8",
+     "type": "cold"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 60
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Frozen statue effect on creatures killed is not modeled."
+  }
+ },
+ "chromatic-orb": {
+  "ability": {
+   "name": "Chromatic Orb",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 90,
+   "rolls": 2,
+   "damage": [
+    {
+     "dice": "3d8",
+     "type": "force"
+    }
+   ],
+   "targets": 2,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 1,
+    "extra_rolls": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Second attack and additional targets occur only when the damage dice match."
+  }
+ },
+ "compulsion": {
+  "ability": {
+   "name": "Compulsion",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Charmed targets can be directed to move in a chosen horizontal direction using a bonus action."
+  }
+ },
+ "conjure-minor-elementals": {
+  "ability": {
+   "name": "Conjure Minor Elementals",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 15
+   },
+   "buff": {
+    "damage_bonus": "2d8",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Adds elemental damage to attacks against creatures within 15 feet; difficult terrain for enemies is not modeled."
+  }
+ },
+ "continual-flame": {
+  "ability": {
+   "name": "Continual Flame",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates persistent light; no meaningful combat effect."
+  }
+ },
+ "bestow-curse": {
+  "ability": {
+   "name": "Bestow Curse",
+   "cost": "action",
+   "kind": "debuff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Applies a curse; selected disadvantage, forced Dodge, or conditional 1d8 necrotic effect is not directly representable."
+  }
+ },
+ "contact-other-plane": {
+  "ability": {
+   "name": "Contact Other Plane",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "6d6",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "int",
+    "dc": 15,
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "incapacitated",
+    "duration": 4800,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Failed save incapacitates caster until long rest; successful save enables questions, omitted."
+  }
+ },
+ "conjure-animals": {
+  "ability": {
+   "name": "Conjure Animals",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 10
+   },
+   "concentration": true,
+   "duration": 100,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "3d10",
+      "type": "slashing"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Pack movement and once-per-turn trigger represented as recurring automatic save within 10 feet."
+  }
+ },
+ "confusion": {
+  "ability": {
+   "name": "Confusion",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 90,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 10
+   },
+   "condition": {
+    "name": "incapacitated",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Incapacitated approximates random behavior and inability to take actions; radius increases by 5 feet per upcast level."
+  }
+ },
+ "contingency": {
+  "ability": {
+   "name": "Contingency",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Stores a qualifying spell for a conditional trigger; contingent spell effects are not specified."
+  }
+ },
+ "control-weather": {
+  "ability": {
+   "name": "Control Weather",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Primarily environmental; no direct combat effect in a simple simulator."
+  }
+ },
+ "contagion": {
+  "ability": {
+   "name": "Contagion",
+   "cost": "action",
+   "kind": "save",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "11d8",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "poisoned",
+    "duration": 10080,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 10080,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Chosen-ability save disadvantage and three-success/failure tracking are approximated by repeated Constitution saves."
+  }
+ },
+ "create-food-and-water": {
+  "ability": {
+   "name": "Create Food and Water",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates nourishment but has no direct combat effect."
+  }
+ },
+ "conjure-fey": {
+  "ability": {
+   "name": "Conjure Fey",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d12",
+     "type": "psychic"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "frightened",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "3d12",
+      "type": "psychic"
+     }
+    ],
+    "attack": true,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d12",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summoned spirit and teleport are approximated; recurring attacks also frighten on hit."
+  }
+ },
+ "control-water": {
+  "ability": {
+   "name": "Control Water",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 300,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 50
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d8",
+      "type": "bludgeoning"
+     }
+    ],
+    "save": {
+     "ability": "str",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents the whirlpool combat mode; other water-control effects are utility or movement-focused."
+  }
+ },
+ "counterspell": {
+  "ability": {
+   "name": "Counterspell",
+   "cost": "reaction",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "On a failed Constitution save, the target's spell dissipates and its action, bonus action, or reaction is wasted."
+  }
+ },
+ "conjure-elemental": {
+  "ability": {
+   "name": "Conjure Elemental",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "8d8",
+     "type": "force"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 100,
+    "save_ends": true,
+    "save_ability": "dex",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 100,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "4d8",
+      "type": "force"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Elemental damage type varies by chosen element: lightning, thunder, fire, or cold."
+  }
+ },
+ "conjure-woodland-beings": {
+  "ability": {
+   "name": "Conjure Woodland Beings",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d8",
+     "type": "force"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 10
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d8",
+      "type": "force"
+     }
+    ],
+    "save": {
+     "ability": "wis",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Disengage bonus action benefit is not represented."
+  }
+ },
+ "conjure-celestial": {
+  "ability": {
+   "name": "Conjure Celestial",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 90,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "6d12",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 10
+   },
+   "heal": "4d12",
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "6d12",
+      "type": "radiant"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d12",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Healing and damaging lights are combined; cylinder height and once-per-turn targeting are approximated."
+  }
+ },
+ "create-or-destroy-water": {
+  "ability": {
+   "name": "Create or Destroy Water",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates or destroys water and can extinguish flames or clear fog; no meaningful combat effect."
+  }
+ },
+ "dancing-lights": {
+  "ability": {
+   "name": "Dancing Lights",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates movable lights; no meaningful combat effect."
+  }
+ },
+ "darkvision": {
+  "ability": {
+   "name": "Darkvision",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants darkvision; no meaningful direct combat effect."
+  }
+ },
+ "cure-wounds": {
+  "ability": {
+   "name": "Cure Wounds",
+   "cost": "action",
+   "kind": "heal",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "heal": "2d8",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "2d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "daylight": {
+  "ability": {
+   "name": "Daylight",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates bright light and can dispel lower-level magical darkness; no direct combat effect."
+  }
+ },
+ "create-undead": {
+  "ability": {
+   "name": "Create Undead",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 3,
+   "concentration": false,
+   "duration": 1440,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons up to three controlled Ghouls for 24 hours; higher-level Ghast, Wight, and Mummy options omitted."
+  }
+ },
+ "creation": {
+  "ability": {
+   "name": "Creation",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates noncombat objects; casting time and special material duration are not modeled."
+  }
+ },
+ "detect-magic": {
+  "ability": {
+   "name": "Detect Magic",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Detects magic; no direct combat effect."
+  }
+ },
+ "demiplane": {
+  "ability": {
+   "name": "Demiplane",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates an extradimensional doorway; no direct combat effect."
+  }
+ },
+ "detect-poison-and-disease": {
+  "ability": {
+   "name": "Detect Poison and Disease",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Detects poisons, poisonous or venomous creatures, and magical contagions; no direct combat effect."
+  }
+ },
+ "detect-evil-and-good": {
+  "ability": {
+   "name": "Detect Evil and Good",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Detects certain creature types and Hallow within 30 feet; provides no direct combat effect."
+  }
+ },
+ "darkness": {
+  "ability": {
+   "name": "Darkness",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 15
+   },
+   "condition": {
+    "name": "blinded",
+    "duration": 100,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 100,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents magical darkness as blindness within the area; ignores alternate object-centered emanation and light dispelling."
+  }
+ },
+ "detect-thoughts": {
+  "ability": {
+   "name": "Detect Thoughts",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Primarily information-gathering; no meaningful direct combat effect."
+  }
+ },
+ "death-ward": {
+  "ability": {
+   "name": "Death Ward",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants one-use protection against dropping to 0 hit points or instant death."
+  }
+ },
+ "disintegrate": {
+  "ability": {
+   "name": "Disintegrate",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d6+40",
+     "type": "force"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "3d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Automatically disintegrates eligible nonmagical objects and magical force creations."
+  }
+ },
+ "disguise-self": {
+  "ability": {
+   "name": "Disguise Self",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Illusion provides no direct combat effect."
+  }
+ },
+ "delayed-blast-fireball": {
+  "ability": {
+   "name": "Delayed Blast Fireball",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "12d6",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "1d6",
+      "type": "fire"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Recurring die approximates damage accumulated each turn before the delayed explosion."
+  }
+ },
+ "divination": {
+  "ability": {
+   "name": "Divination",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides truthful guidance about a future event; no direct combat effect."
+  }
+ },
+ "divine-favor": {
+  "ability": {
+   "name": "Divine Favor",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "damage_bonus": "1d4",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "dissonant-whispers": {
+  "ability": {
+   "name": "Dissonant Whispers",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Failed save forces immediate reaction movement away; movement is not represented in the ability schema."
+  }
+ },
+ "dimension-door": {
+  "ability": {
+   "name": "Dimension Door",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 500,
+   "rolls": 0,
+   "damage": [],
+   "targets": 2,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Teleports the caster and one willing creature; collision damage is not modeled."
+  }
+ },
+ "dispel-magic": {
+  "ability": {
+   "name": "Dispel Magic",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Ends ongoing spells; higher-level spell removal checks are not represented."
+  }
+ },
+ "druidcraft": {
+  "ability": {
+   "name": "Druidcraft",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Harmless nature effects with no meaningful combat impact."
+  }
+ },
+ "divine-smite": {
+  "ability": {
+   "name": "Divine Smite",
+   "cost": "bonus",
+   "kind": "auto",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d8",
+     "type": "radiant"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Fiend and undead bonus damage is not represented."
+  }
+ },
+ "dispel-evil-and-good": {
+  "ability": {
+   "name": "Dispel Evil and Good",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Protective disadvantage and optional Break Enchantment or Dismissal are approximated; typed targeting is not represented."
+  }
+ },
+ "dominate-monster": {
+  "ability": {
+   "name": "Dominate Monster",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 600,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Target has advantage on initial save if fighting caster or allies; telepathic commands are not modeled."
+  }
+ },
+ "dominate-beast": {
+  "ability": {
+   "name": "Dominate Beast",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Damage prompts a new Wisdom save; telepathic commands are not modeled."
+  }
+ },
+ "eldritch-blast": {
+  "ability": {
+   "name": "Eldritch Blast",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d10",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "dominate-person": {
+  "ability": {
+   "name": "Dominate Person",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Damage prompts an additional Wisdom save; telepathic commands are not modeled."
+  }
+ },
+ "elementalism": {
+  "ability": {
+   "name": "Elementalism",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates harmless elemental effects with no meaningful combat impact."
+  }
+ },
+ "entangle": {
+  "ability": {
+   "name": "Entangle",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 90,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "str",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "str",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Square area approximated as cube; escape requires an action Athletics check rather than a saving throw."
+  }
+ },
+ "dream": {
+  "ability": {
+   "name": "Dream",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Optional terrifying dream deals damage when target wakes; communication and sleep effects are not modeled."
+  }
+ },
+ "enhance-ability": {
+  "ability": {
+   "name": "Enhance Ability",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants advantage on chosen ability checks; schema lacks a generic ability-check advantage field."
+  }
+ },
+ "enlarge-reduce": {
+  "ability": {
+   "name": "Enlarge/Reduce",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "buff": {
+    "damage_bonus": "1d4",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models Enlarge; size, Strength-check advantage, and Reduce's opposing effects are not represented."
+  }
+ },
+ "divine-word": {
+  "ability": {
+   "name": "Divine Word",
+   "cost": "bonus",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "stunned",
+    "duration": 600,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates failed-save targets as stunned; omits HP thresholds, death, deafness, and planar banishment."
+  }
+ },
+ "dragons-breath": {
+  "ability": {
+   "name": "Dragon's Breath",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 15
+   },
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "action",
+    "damage": [
+     {
+      "dice": "3d6",
+      "type": "force"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Damage type is chosen from acid, cold, fire, lightning, or poison."
+  }
+ },
+ "ensnaring-strike": {
+  "ability": {
+   "name": "Ensnaring Strike",
+   "cost": "bonus",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "str",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "str",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "1d6",
+      "type": "piercing"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Large creatures have advantage; target or nearby creature can end it with a Strength (Athletics) check."
+  }
+ },
+ "enthrall": {
+  "ability": {
+   "name": "Enthrall",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Only penalizes Perception checks, with no meaningful combat effect."
+  }
+ },
+ "fabricate": {
+  "ability": {
+   "name": "Fabricate",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates nonmagical objects from raw materials; no direct combat effect."
+  }
+ },
+ "faerie-fire": {
+  "ability": {
+   "name": "Faerie Fire",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "condition": {
+    "name": "outlined",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "dex",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "earthquake": {
+  "ability": {
+   "name": "Earthquake",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 500,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 100
+   },
+   "condition": {
+    "name": "prone",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Fissures and structure-collapse damage are omitted."
+  }
+ },
+ "false-life": {
+  "ability": {
+   "name": "False Life",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "temp_hp": "2d4+4",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "5",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "expeditious-retreat": {
+  "ability": {
+   "name": "Expeditious Retreat",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Grants repeated Dash as a bonus action; movement increase is represented abstractly."
+  }
+ },
+ "etherealness": {
+  "ability": {
+   "name": "Etherealness",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 4800,
+   "upcast": {
+    "extra_targets": 3,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Ethereal phasing and immunity to non-Ethereal interaction are approximated as a defensive buff."
+  }
+ },
+ "fireball": {
+  "ability": {
+   "name": "Fireball",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "8d6",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "faithful-hound": {
+  "ability": {
+   "name": "Faithful Hound",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 480,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "4d8",
+      "type": "force"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Summoned hound bites one enemy within 5 feet at the start of each caster turn."
+  }
+ },
+ "eyebite": {
+  "ability": {
+   "name": "Eyebite",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "frightened",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models Panicked effect; spell can instead impose Unconscious or Poisoned, with retargeting each turn."
+  }
+ },
+ "find-traps": {
+  "ability": {
+   "name": "Find Traps",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Detects traps but provides no meaningful combat effect."
+  }
+ },
+ "find-the-path": {
+  "ability": {
+   "name": "Find the Path",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides navigation only; no meaningful combat effect."
+  }
+ },
+ "fire-bolt": {
+  "ability": {
+   "name": "Fire Bolt",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d10",
+     "type": "fire"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "fear": {
+  "ability": {
+   "name": "Fear",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 30
+   },
+   "condition": {
+    "name": "frightened",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Affected creatures save only after ending turns without line of sight to the caster."
+  }
+ },
+ "feather-fall": {
+  "ability": {
+   "name": "Feather Fall",
+   "cost": "reaction",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 5,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Prevents falling damage and slows descent; simulator lacks a dedicated fall-protection effect."
+  }
+ },
+ "find-familiar": {
+  "ability": {
+   "name": "Find Familiar",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Summons a CR 0 familiar that cannot attack but can scout, deliver touch spells, and provide sensory support."
+  }
+ },
+ "finger-of-death": {
+  "ability": {
+   "name": "Finger of Death",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [
+    {
+     "dice": "7d8+30",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Zombie creation on killing a humanoid is not modeled."
+  }
+ },
+ "fire-storm": {
+  "ability": {
+   "name": "Fire Storm",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "7d10",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 100
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents up to ten contiguous 10-foot cubes as a 100-foot cube area."
+  }
+ },
+ "find-steed": {
+  "ability": {
+   "name": "Find Steed",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons an Otherworldly Steed ally; its stat block and independent actions are approximated outside this ability."
+  }
+ },
+ "floating-disk": {
+  "ability": {
+   "name": "Floating Disk",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a mobile force disk for carrying objects; no direct combat effect."
+  }
+ },
+ "flame-strike": {
+  "ability": {
+   "name": "Flame Strike",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d6",
+     "type": "fire"
+    },
+    {
+     "dice": "5d6",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 10
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Cylinder height is not represented; area size uses the 10-foot radius."
+  }
+ },
+ "fog-cloud": {
+  "ability": {
+   "name": "Fog Cloud",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates heavily obscured fog; obscuration is approximated without a dedicated condition."
+  }
+ },
+ "fire-shield": {
+  "ability": {
+   "name": "Fire Shield",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "cold"
+    ]
+   },
+   "concentration": false,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d8",
+      "type": "fire"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Warm shield option represented; chill shield would swap resistance and retaliation damage types."
+  }
+ },
+ "fly": {
+  "ability": {
+   "name": "Fly",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 100,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants 60-foot flying and hovering; movement is approximated as a generic buff."
+  }
+ },
+ "flesh-to-stone": {
+  "ability": {
+   "name": "Flesh to Stone",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models restraint and one save to end; three-save progression, petrification, and speed reduction are approximated."
+  }
+ },
+ "freezing-sphere": {
+  "ability": {
+   "name": "Freezing Sphere",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 300,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d6",
+     "type": "cold"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Water-freezing and restrained effect omitted."
+  }
+ },
+ "flaming-sphere": {
+  "ability": {
+   "name": "Flaming Sphere",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "2d6",
+      "type": "fire"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Sphere damages one creature when moved into its space or when a creature ends its turn within 5 feet."
+  }
+ },
+ "freedom-of-movement": {
+  "ability": {
+   "name": "Freedom of Movement",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Prevents magical slowing, paralysis, and restraint; ignores difficult terrain and grants escape mobility."
+  }
+ },
+ "gate": {
+  "ability": {
+   "name": "Gate",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Planar travel and portal effects are not modeled as direct combat mechanics."
+  }
+ },
+ "gaseous-form": {
+  "ability": {
+   "name": "Gaseous Form",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "bludgeoning",
+     "piercing",
+     "slashing"
+    ]
+   },
+   "concentration": true,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Flight, prone immunity, save advantage, passage, and inability to attack are approximated or omitted."
+  }
+ },
+ "foresight": {
+  "ability": {
+   "name": "Foresight",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": true,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants advantage on D20 Tests; disadvantage on attacks against target is not directly represented."
+  }
+ },
+ "gentle-repose": {
+  "ability": {
+   "name": "Gentle Repose",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Protects a corpse from decay and undeath; no meaningful combat effect."
+  }
+ },
+ "forcecage": {
+  "ability": {
+   "name": "Forcecage",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 100,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 60,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates magical imprisonment as restrained; teleportation escape saving throw is omitted."
+  }
+ },
+ "flame-blade": {
+  "ability": {
+   "name": "Flame Blade",
+   "cost": "bonus",
+   "kind": "attack",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "fire"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Models the blade's melee spell attack; casting and attack timing are combined."
+  }
+ },
+ "glibness": {
+  "ability": {
+   "name": "Glibness",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Improves Charisma checks and defeats magical truth detection; no direct combat effect."
+  }
+ },
+ "geas": {
+  "ability": {
+   "name": "Geas",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [
+    {
+     "dice": "5d10",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 43200,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 43200,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Conditional psychic damage occurs no more than once per day when the target directly disobeys."
+  }
+ },
+ "globe-of-invulnerability": {
+  "ability": {
+   "name": "Globe of Invulnerability",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 10
+   },
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Blocks harmful spells of 5th level or lower from outside the barrier."
+  }
+ },
+ "forbiddance": {
+  "ability": {
+   "name": "Forbiddance",
+   "cost": "action",
+   "kind": "auto",
+   "melee": false,
+   "range": 5,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 200
+   },
+   "concentration": false,
+   "duration": 14400,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d10",
+      "type": "force"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates the 40,000-square-foot, 30-foot-high ward as a 200-foot cube."
+  }
+ },
+ "greater-restoration": {
+  "ability": {
+   "name": "Greater Restoration",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Removes exhaustion, charm, petrification, curses, ability score reductions, or hit point maximum reductions."
+  }
+ },
+ "guidance": {
+  "ability": {
+   "name": "Guidance",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Improves one skill ability check by 1d4; no direct combat effect."
+  }
+ },
+ "greater-invisibility": {
+  "ability": {
+   "name": "Greater Invisibility",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": true,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Invisibility grants advantage on attacks and typically imposes disadvantage on attacks against the invisible creature."
+  }
+ },
+ "guiding-bolt": {
+  "ability": {
+   "name": "Guiding Bolt",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d6",
+     "type": "radiant"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "outlined",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Next attack against the target before the end of your next turn has advantage."
+  }
+ },
+ "goodberry": {
+  "ability": {
+   "name": "Goodberry",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 10,
+   "heal": "1",
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates ten berries; each can be consumed separately as a bonus action to restore 1 hit point."
+  }
+ },
+ "grease": {
+  "ability": {
+   "name": "Grease",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 10
+   },
+   "condition": {
+    "name": "prone",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models the 10-foot square as a cube; recurring saves represent creatures entering or ending turns in the area."
+  }
+ },
+ "guards-and-wards": {
+  "ability": {
+   "name": "Guards and Wards",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 50
+   },
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Complex ward with multiple optional effects not represented in a simple combat simulation."
+  }
+ },
+ "harm": {
+  "ability": {
+   "name": "Harm",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "14d6",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Hit point maximum reduction is not represented."
+  }
+ },
+ "guardian-of-faith": {
+  "ability": {
+   "name": "Guardian of Faith",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 4800,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "20",
+      "type": "radiant"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Guardian placement, occupancy, invulnerability, and 60-damage disappearance limit are approximated."
+  }
+ },
+ "hallucinatory-terrain": {
+  "ability": {
+   "name": "Hallucinatory Terrain",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 300,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 150
+   },
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Illusion alters natural terrain appearance, sound, and smell; no direct combat effect."
+  }
+ },
+ "gust-of-wind": {
+  "ability": {
+   "name": "Gust of Wind",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "str",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 60
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "str",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents the line, repeated saves, forced push, and movement restriction; push is not directly encoded."
+  }
+ },
+ "healing-word": {
+  "ability": {
+   "name": "Healing Word",
+   "cost": "bonus",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "heal": "2d4",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "2d4",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "hold-person": {
+  "ability": {
+   "name": "Hold Person",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "paralyzed",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Target repeats the Wisdom save at the end of each turn."
+  }
+ },
+ "glyph-of-warding": {
+  "ability": {
+   "name": "Glyph of Warding",
+   "cost": "none",
+   "kind": "save",
+   "melee": false,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d8",
+     "type": "acid"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Explosive rune shown as acid; caster chooses acid, cold, fire, lightning, or thunder. Spell glyph storage is omitted."
+  }
+ },
+ "haste": {
+  "ability": {
+   "name": "Haste",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 2,
+    "advantage_attacks": false,
+    "extra_attack": true,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Speed doubling, Dexterity save advantage, restricted extra action, and end-of-spell lethargy are approximated."
+  }
+ },
+ "giant-insect": {
+  "ability": {
+   "name": "Giant Insect",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 100,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons a selectable insect; creature has two attacks, variant-specific actions, AC 15, and 70 hit points."
+  }
+ },
+ "heal": {
+  "ability": {
+   "name": "Heal",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "heal": "70",
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Restores 70 hit points; ending blinded, deafened, and poisoned conditions is not modeled."
+  }
+ },
+ "hellish-rebuke": {
+  "ability": {
+   "name": "Hellish Rebuke",
+   "cost": "reaction",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d10",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "heat-metal": {
+  "ability": {
+   "name": "Heat Metal",
+   "cost": "action",
+   "kind": "auto",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d8",
+     "type": "fire"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "2d8",
+      "type": "fire"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Constitution save to drop object and impose disadvantage is not representable in the schema."
+  }
+ },
+ "heroism": {
+  "ability": {
+   "name": "Heroism",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "temp_hp": "spellcasting_modifier",
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants frightened immunity and refreshes temporary hit points at the start of each turn."
+  }
+ },
+ "hex": {
+  "ability": {
+   "name": "Hex",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 90,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "damage_bonus": "1d6",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Adds 1d6 necrotic damage on hits; disadvantage on chosen ability checks is not represented."
+  }
+ },
+ "identify": {
+  "ability": {
+   "name": "Identify",
+   "cost": "none",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "No meaningful combat effect."
+  }
+ },
+ "illusory-script": {
+  "ability": {
+   "name": "Illusory Script",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates hidden or altered writing; no direct combat effect."
+  }
+ },
+ "hold-monster": {
+  "ability": {
+   "name": "Hold Monster",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 90,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "paralyzed",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "hunters-mark": {
+  "ability": {
+   "name": "Hunter's Mark",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 90,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "damage_bonus": "1d6",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Also grants advantage on Perception or Survival checks to find the marked creature."
+  }
+ },
+ "hallow": {
+  "ability": {
+   "name": "Hallow",
+   "cost": "action",
+   "kind": "control",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "condition": {
+    "name": "frightened",
+    "duration": 0,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents the selectable Fear effect; other wards and extra effects are omitted."
+  }
+ },
+ "heroes-feast": {
+  "ability": {
+   "name": "Heroes' Feast",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 12,
+   "heal": "2d10",
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "poison"
+    ]
+   },
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Also grants poison and frightened immunity and increases hit point maximum by 2d10 for 24 hours."
+  }
+ },
+ "hypnotic-pattern": {
+  "ability": {
+   "name": "Hypnotic Pattern",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 30
+   },
+   "condition": {
+    "name": "incapacitated",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Also charms affected creatures and reduces their Speed to 0; damage or an action ends the effect."
+  }
+ },
+ "ice-knife": {
+  "ability": {
+   "name": "Ice Knife",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d10",
+     "type": "piercing"
+    },
+    {
+     "dice": "2d6",
+     "type": "cold"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 5
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Combines the initial attack and explosion; cold damage is applied through the Dexterity save."
+  }
+ },
+ "incendiary-cloud": {
+  "ability": {
+   "name": "Incendiary Cloud",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d8",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "10d8",
+      "type": "fire"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Obscurement and cloud movement are not represented."
+  }
+ },
+ "inflict-wounds": {
+  "ability": {
+   "name": "Inflict Wounds",
+   "cost": "action",
+   "kind": "save",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d10",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "legend-lore": {
+  "ability": {
+   "name": "Legend Lore",
+   "cost": "none",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat lore-gathering spell."
+  }
+ },
+ "imprisonment": {
+  "ability": {
+   "name": "Imprisonment",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 1000000,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1000000,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents the Chaining option; other imprisonment modes are omitted."
+  }
+ },
+ "knock": {
+  "ability": {
+   "name": "Knock",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Unlocks or suppresses access barriers; no meaningful combat effect."
+  }
+ },
+ "holy-aura": {
+  "ability": {
+   "name": "Holy Aura",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 30
+   },
+   "condition": {
+    "name": "blinded",
+    "duration": 1,
+    "save_ends": false,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Aura advantage on chosen allies' saves and disadvantage on attacks against them; blinds fiends or undead that fail Constitution saves."
+  }
+ },
+ "insect-plague": {
+  "ability": {
+   "name": "Insect Plague",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 300,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d10",
+     "type": "piercing"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "4d10",
+      "type": "piercing"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Area is lightly obscured and difficult terrain; these effects are not represented."
+  }
+ },
+ "jump": {
+  "ability": {
+   "name": "Jump",
+   "cost": "bonus",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants a 30-foot jump once per turn; mobility benefit is approximated as utility."
+  }
+ },
+ "hideous-laughter": {
+  "ability": {
+   "name": "Hideous Laughter",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "incapacitated",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Also imposes prone; repeated saves occur at turn end and after damage, with advantage after damage."
+  }
+ },
+ "invisibility": {
+  "ability": {
+   "name": "Invisibility",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": true,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Invisible condition is approximated as advantage on attacks; spell ends after attacking, dealing damage, or casting a spell."
+  }
+ },
+ "irresistible-dance": {
+  "ability": {
+   "name": "Irresistible Dance",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Charm captured; dancing, movement restriction, and attack disadvantage are approximated."
+  }
+ },
+ "light": {
+  "ability": {
+   "name": "Light",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates light; no meaningful combat effect."
+  }
+ },
+ "lesser-restoration": {
+  "ability": {
+   "name": "Lesser Restoration",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Removes blinded, deafened, paralyzed, or poisoned; condition removal is approximated as a buff."
+  }
+ },
+ "levitate": {
+  "ability": {
+   "name": "Levitate",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Restricts movement and suspends target; no direct condition represents levitation."
+  }
+ },
+ "instant-summons": {
+  "ability": {
+   "name": "Instant Summons",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat item retrieval spell; casting time and indefinite duration are approximated."
+  }
+ },
+ "ice-storm": {
+  "ability": {
+   "name": "Ice Storm",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 300,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d10",
+     "type": "bludgeoning"
+    },
+    {
+     "dice": "4d6",
+     "type": "cold"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 20
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Difficult terrain until end of next turn is omitted; cylinder height is 40 feet."
+  }
+ },
+ "locate-animals-or-plants": {
+  "ability": {
+   "name": "Locate Animals or Plants",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat divination spell."
+  }
+ },
+ "locate-object": {
+  "ability": {
+   "name": "Locate Object",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Locates a familiar or nearest object within 1,000 feet; no direct combat effect."
+  }
+ },
+ "lightning-bolt": {
+  "ability": {
+   "name": "Lightning Bolt",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [
+    {
+     "dice": "8d6",
+     "type": "lightning"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 100
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "locate-creature": {
+  "ability": {
+   "name": "Locate Creature",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Locates a familiar creature; no direct combat effect."
+  }
+ },
+ "longstrider": {
+  "ability": {
+   "name": "Longstrider",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Increases target Speed by 10 feet; speed bonuses are not represented in the buff schema."
+  }
+ },
+ "mage-hand": {
+  "ability": {
+   "name": "Mage Hand",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Manipulates objects; no meaningful combat effect."
+  }
+ },
+ "magic-missile": {
+  "ability": {
+   "name": "Magic Missile",
+   "cost": "action",
+   "kind": "auto",
+   "melee": false,
+   "range": 120,
+   "rolls": 3,
+   "damage": [
+    {
+     "dice": "1d4+1",
+     "type": "force"
+    }
+   ],
+   "targets": 3,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "extra_targets": 0,
+    "extra_rolls": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "mage-armor": {
+  "ability": {
+   "name": "Mage Armor",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 13,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Sets base AC to 13 plus Dexterity modifier; Dexterity component is applied by the simulator."
+  }
+ },
+ "magnificent-mansion": {
+  "ability": {
+   "name": "Magnificent Mansion",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 300,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates an extradimensional dwelling; no direct combat effect."
+  }
+ },
+ "magic-mouth": {
+  "ability": {
+   "name": "Magic Mouth",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat triggered message; duration until dispelled is not represented."
+  }
+ },
+ "magic-circle": {
+  "ability": {
+   "name": "Magic Circle",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 10,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 10
+   },
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates a protective cylinder; creature-type restrictions and attack disadvantage are approximated."
+  }
+ },
+ "mass-healing-word": {
+  "ability": {
+   "name": "Mass Healing Word",
+   "cost": "bonus",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "targets": 6,
+   "heal": "2d4",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d4",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "magic-weapon": {
+  "ability": {
+   "name": "Magic Weapon",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "attack_bonus": "+1",
+    "damage_bonus": "+1",
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "mass-cure-wounds": {
+  "ability": {
+   "name": "Mass Cure Wounds",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "targets": 6,
+   "area": {
+    "shape": "sphere",
+    "size": 30
+   },
+   "heal": "5d8",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "major-image": {
+  "ability": {
+   "name": "Major Image",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Illusion may distract or deceive, but has no direct combat effect in this simulation."
+  }
+ },
+ "mending": {
+  "ability": {
+   "name": "Mending",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Repairs objects; no meaningful combat effect."
+  }
+ },
+ "maze": {
+  "ability": {
+   "name": "Maze",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "condition": {
+    "name": "banished",
+    "duration": 100,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 100,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Escape requires a DC 20 Intelligence (Investigation) check, approximated as no re-save."
+  }
+ },
+ "message": {
+  "ability": {
+   "name": "Message",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Communication effect has no meaningful combat impact."
+  }
+ },
+ "meld-into-stone": {
+  "ability": {
+   "name": "Meld into Stone",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Concealment and stone interaction are not meaningfully modeled in combat."
+  }
+ },
+ "mass-heal": {
+  "ability": {
+   "name": "Mass Heal",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "heal": "700",
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Up to 700 total healing divided among any number; removes blinded, deafened, and poisoned conditions."
+  }
+ },
+ "mass-suggestion": {
+  "ability": {
+   "name": "Mass Suggestion",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 12,
+   "condition": {
+    "name": "charmed",
+    "duration": 14400,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Targets follow a non-damaging suggestion; duration ends early when the suggestion is completed."
+  }
+ },
+ "meteor-swarm": {
+  "ability": {
+   "name": "Meteor Swarm",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 5280,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "20d6",
+     "type": "fire"
+    },
+    {
+     "dice": "20d6",
+     "type": "bludgeoning"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 40
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Four overlapping spheres affect a creature only once; represented as one 40-foot sphere area."
+  }
+ },
+ "magic-jar": {
+  "ability": {
+   "name": "Magic Jar",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 100,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "incapacitated",
+    "duration": 0,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Possession and control are approximated as incapacitation; spell lasts until dispelled."
+  }
+ },
+ "minor-illusion": {
+  "ability": {
+   "name": "Minor Illusion",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a sound or small visual illusion without a direct combat effect."
+  }
+ },
+ "mind-blank": {
+  "ability": {
+   "name": "Mind Blank",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "psychic"
+    ]
+   },
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Psychic immunity and charm immunity approximated as psychic resistance; mental protection and detection blocking omitted."
+  }
+ },
+ "misty-step": {
+  "ability": {
+   "name": "Misty Step",
+   "cost": "bonus",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Teleports the caster up to 30 feet to a visible unoccupied space."
+  }
+ },
+ "mind-spike": {
+  "ability": {
+   "name": "Mind Spike",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d8",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 600,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Failed save also tracks target and negates its hiding and invisibility benefits against the caster."
+  }
+ },
+ "mirror-image": {
+  "ability": {
+   "name": "Mirror Image",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Defensive duplicate interception is approximated; simulator lacks attack redirection or miss-chance fields."
+  }
+ },
+ "pass-without-trace": {
+  "ability": {
+   "name": "Pass without Trace",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 30
+   },
+   "concentration": true,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Stealth benefit has no meaningful combat effect in this simulator."
+  }
+ },
+ "move-earth": {
+  "ability": {
+   "name": "Move Earth",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 120,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Reshapes terrain over 10 minutes; no meaningful direct combat effect."
+  }
+ },
+ "nondetection": {
+  "ability": {
+   "name": "Nondetection",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat protection from divination spells and magical scrying."
+  }
+ },
+ "mislead": {
+  "ability": {
+   "name": "Mislead",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Grants invisibility and creates an illusory double; invisibility cannot be represented directly."
+  }
+ },
+ "passwall": {
+  "ability": {
+   "name": "Passwall",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a temporary passage through wood, plaster, or stone; no direct combat effect."
+  }
+ },
+ "moonbeam": {
+  "ability": {
+   "name": "Moonbeam",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d10",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 5
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d10",
+      "type": "radiant"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Cylinder is represented by its 5-foot radius; 40-foot height and movement are not separately modeled."
+  }
+ },
+ "mirage-arcane": {
+  "ability": {
+   "name": "Mirage Arcane",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 5280
+   },
+   "concentration": false,
+   "duration": 144000,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Illusory terrain can impede movement but has no directly modeled combat effect."
+  }
+ },
+ "phantasmal-force": {
+  "ability": {
+   "name": "Phantasmal Force",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [],
+   "save": {
+    "ability": "int",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d8",
+      "type": "psychic"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Investigation check to identify illusion is not modeled."
+  }
+ },
+ "modify-memory": {
+  "ability": {
+   "name": "Modify Memory",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "incapacitated",
+    "duration": 10,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Also charms and leaves target unaware; memory alteration is omitted."
+  }
+ },
+ "phantom-steed": {
+  "ability": {
+   "name": "Phantom Steed",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons a fast riding horse; steed fades when spell ends or after taking damage."
+  }
+ },
+ "poison-spray": {
+  "ability": {
+   "name": "Poison Spray",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 30,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d12",
+     "type": "poison"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "plane-shift": {
+  "ability": {
+   "name": "Plane Shift",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 9,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Transports willing creatures between planes; no meaningful combat effect."
+  }
+ },
+ "planar-ally": {
+  "ability": {
+   "name": "Planar Ally",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons an unspecified Celestial, Elemental, or Fiend; creature statistics and service terms require GM adjudication."
+  }
+ },
+ "power-word-heal": {
+  "ability": {
+   "name": "Power Word Heal",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "heal": "all",
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Also ends several conditions and lets a prone target stand using its reaction."
+  }
+ },
+ "power-word-kill": {
+  "ability": {
+   "name": "Power Word Kill",
+   "cost": "action",
+   "kind": "auto",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "12d12",
+     "type": "psychic"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Targets at 100 HP or fewer die; otherwise takes 12d12 psychic damage."
+  }
+ },
+ "planar-binding": {
+  "ability": {
+   "name": "Planar Binding",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Binding and compelled service are approximated as control without a supported condition."
+  }
+ },
+ "plant-growth": {
+  "ability": {
+   "name": "Plant Growth",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 150,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 100
+   },
+   "condition": {
+    "name": "slowed",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Overgrowth makes movement through the area cost four times normal; duration and terrain are approximated."
+  }
+ },
+ "prayer-of-healing": {
+  "ability": {
+   "name": "Prayer of Healing",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 5,
+   "heal": "2d8",
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Also grants a Short Rest; ten-minute casting and per-Long-Rest restriction are approximated."
+  }
+ },
+ "phantasmal-killer": {
+  "ability": {
+   "name": "Phantasmal Killer",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d10",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "4d10",
+      "type": "psychic"
+     }
+    ],
+    "save": {
+     "ability": "wis",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d10",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Recurring saves and disadvantage are approximated; successful recurring save ends the effect."
+  }
+ },
+ "polymorph": {
+  "ability": {
+   "name": "Polymorph",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Transformation and temporary hit points are not directly represented by the available condition and buff fields."
+  }
+ },
+ "private-sanctum": {
+  "ability": {
+   "name": "Private Sanctum",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 100
+   },
+   "concentration": false,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat warding spell; casting time represented as an action."
+  }
+ },
+ "project-image": {
+  "ability": {
+   "name": "Project Image",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 2640000,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 1440,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a remote intangible illusion with no direct combat effect."
+  }
+ },
+ "prestidigitation": {
+  "ability": {
+   "name": "Prestidigitation",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Minor magical effects have no meaningful combat impact."
+  }
+ },
+ "programmed-illusion": {
+  "ability": {
+   "name": "Programmed Illusion",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Persistent scripted illusion has no direct combat effect in this simulator."
+  }
+ },
+ "purify-food-and-drink": {
+  "ability": {
+   "name": "Purify Food and Drink",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 5
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Noncombat purification effect."
+  }
+ },
+ "protection-from-energy": {
+  "ability": {
+   "name": "Protection from Energy",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "acid",
+     "cold",
+     "fire",
+     "lightning",
+     "thunder"
+    ]
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Target chooses one listed damage resistance when cast."
+  }
+ },
+ "produce-flame": {
+  "ability": {
+   "name": "Produce Flame",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "fire"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 100,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": "Flame is created as a bonus action; this ability represents hurling it on a later action."
+  }
+ },
+ "power-word-stun": {
+  "ability": {
+   "name": "Power Word Stun",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "stunned",
+    "duration": 1,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Stuns targets with 150 HP or fewer; higher-HP targets instead have Speed 0 until your next turn."
+  }
+ },
+ "raise-dead": {
+  "ability": {
+   "name": "Raise Dead",
+   "cost": "none",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Resurrection spell with no meaningful combat effect."
+  }
+ },
+ "remove-curse": {
+  "ability": {
+   "name": "Remove Curse",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Removes curses; no direct combat effect."
+  }
+ },
+ "protection-from-poison": {
+  "ability": {
+   "name": "Protection from Poison",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "poison"
+    ]
+   },
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Ends poisoned condition; advantage on poison saves is approximated because schema lacks save advantage."
+  }
+ },
+ "protection-from-evil-and-good": {
+  "ability": {
+   "name": "Protection from Evil and Good",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Protective disadvantage, charm, fright, and possession effects are not fully represented by the buff schema."
+  }
+ },
+ "prismatic-spray": {
+  "ability": {
+   "name": "Prismatic Spray",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "12d6",
+     "type": "acid"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cone",
+    "size": 60
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Random ray effects, poison damage, and petrification are approximated as acid damage or restrained."
+  }
+ },
+ "ray-of-frost": {
+  "ability": {
+   "name": "Ray of Frost",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "cold"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "slowed",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": "Speed reduction is represented as the slowed condition until the start of your next turn."
+  }
+ },
+ "reincarnate": {
+  "ability": {
+   "name": "Reincarnate",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Recreates a dead humanoid in a randomly determined new playable species."
+  }
+ },
+ "ray-of-sickness": {
+  "ability": {
+   "name": "Ray of Sickness",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d8",
+     "type": "poison"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "poisoned",
+    "duration": 2,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "resilient-sphere": {
+  "ability": {
+   "name": "Resilient Sphere",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Resilient Sphere's isolation and immunity are approximated as restrained."
+  }
+ },
+ "ray-of-enfeeblement": {
+  "ability": {
+   "name": "Ray of Enfeeblement",
+   "cost": "action",
+   "kind": "debuff",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Disadvantage and 1d8 damage reduction approximated; repeat saves and successful-save penalty are not represented."
+  }
+ },
+ "regenerate": {
+  "ability": {
+   "name": "Regenerate",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 5,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "heal": "4d8+15",
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Initial healing captured; recurring 1 HP per turn and body-part regrowth omitted."
+  }
+ },
+ "resistance": {
+  "ability": {
+   "name": "Resistance",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Reduces chosen damage type by 1d4 once per turn; reduction is not directly represented."
+  }
+ },
+ "rope-trick": {
+  "ability": {
+   "name": "Rope Trick",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates an extradimensional hiding space; no direct combat effect."
+  }
+ },
+ "sacred-flame": {
+  "ability": {
+   "name": "Sacred Flame",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": "Ignores half and three-quarters cover for the Dexterity save."
+  }
+ },
+ "revivify": {
+  "ability": {
+   "name": "Revivify",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "heal": "1",
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Revives a creature dead within the last minute with 1 hit point."
+  }
+ },
+ "reverse-gravity": {
+  "ability": {
+   "name": "Reverse Gravity",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 100,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 50
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Reverses gravity and causes upward movement; cylinder schema records radius, not height."
+  }
+ },
+ "resurrection": {
+  "ability": {
+   "name": "Resurrection",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Revives a dead creature with full hit points; one-hour casting time and post-revival penalties are not modeled."
+  }
+ },
+ "scorching-ray": {
+  "ability": {
+   "name": "Scorching Ray",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 120,
+   "rolls": 3,
+   "damage": [
+    {
+     "dice": "2d6",
+     "type": "fire"
+    }
+   ],
+   "targets": 3,
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "extra_targets": 0,
+    "extra_rolls": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "sanctuary": {
+  "ability": {
+   "name": "Sanctuary",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Protective targeting restriction and ward-ending conditions are approximated."
+  }
+ },
+ "see-invisibility": {
+  "ability": {
+   "name": "See Invisibility",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Allows seeing invisible creatures and into the Ethereal Plane; no direct combat effect modeled."
+  }
+ },
+ "seeming": {
+  "ability": {
+   "name": "Seeming",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 4800,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Illusory disguises lack meaningful combat effects."
+  }
+ },
+ "secret-chest": {
+  "ability": {
+   "name": "Secret Chest",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Noncombat extradimensional storage; duration until dispelled is represented as 0."
+  }
+ },
+ "prismatic-wall": {
+  "ability": {
+   "name": "Prismatic Wall",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "12d6",
+     "type": "acid"
+    },
+    {
+     "dice": "12d6",
+     "type": "poison"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 90
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 100,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 100,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates layered wall effects; omits blindness, petrification, other damage layers, and layer-destruction rules."
+  }
+ },
+ "scrying": {
+  "ability": {
+   "name": "Scrying",
+   "cost": "none",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Remote observation has no meaningful combat effect and is not modeled."
+  }
+ },
+ "sending": {
+  "ability": {
+   "name": "Sending",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat communication spell with unlimited range."
+  }
+ },
+ "shield-of-faith": {
+  "ability": {
+   "name": "Shield of Faith",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 2,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "searing-smite": {
+  "ability": {
+   "name": "Searing Smite",
+   "cost": "bonus",
+   "kind": "auto",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d6",
+     "type": "fire"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "1d6",
+      "type": "fire"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Recurring damage continues until the target succeeds on its Constitution save."
+  }
+ },
+ "shatter": {
+  "ability": {
+   "name": "Shatter",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d8",
+     "type": "thunder"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 10
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Constructs have disadvantage on the Constitution save; nonmagical unattended objects also take damage."
+  }
+ },
+ "shield": {
+  "ability": {
+   "name": "Shield",
+   "cost": "reaction",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 5,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "AC bonus captured; immunity to Magic Missile is not represented by the schema."
+  }
+ },
+ "shapechange": {
+  "ability": {
+   "name": "Shapechange",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Transformation and temporary hit points depend on the chosen creature's stat block."
+  }
+ },
+ "shillelagh": {
+  "ability": {
+   "name": "Shillelagh",
+   "cost": "bonus",
+   "kind": "buff",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": []
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Changes held club or quarterstaff damage die and uses spellcasting ability for melee attack and damage rolls."
+  }
+ },
+ "shocking-grasp": {
+  "ability": {
+   "name": "Shocking Grasp",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "lightning"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Target cannot make opportunity attacks until the start of its next turn; this rider is not represented by the condition schema."
+  }
+ },
+ "shining-smite": {
+  "ability": {
+   "name": "Shining Smite",
+   "cost": "bonus",
+   "kind": "debuff",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d6",
+     "type": "radiant"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "outlined",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Target sheds light, grants advantage to attackers, and cannot benefit from invisibility."
+  }
+ },
+ "speak-with-animals": {
+  "ability": {
+   "name": "Speak with Animals",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Enables communication with Beasts; no direct combat effect."
+  }
+ },
+ "spare-the-dying": {
+  "ability": {
+   "name": "Spare the Dying",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 15,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "full",
+   "notes": "Stabilizes one creature at 0 hit points; no hit points are restored."
+  }
+ },
+ "silence": {
+  "ability": {
+   "name": "Silence",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Deafened, thunder immunity, and verbal spell prevention are approximated by area control."
+  }
+ },
+ "silent-image": {
+  "ability": {
+   "name": "Silent Image",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 15
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Purely visual illusion; combat deception is not modeled."
+  }
+ },
+ "spiritual-weapon": {
+  "ability": {
+   "name": "Spiritual Weapon",
+   "cost": "bonus",
+   "kind": "attack",
+   "melee": true,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "bonus",
+    "damage": [
+     {
+      "dice": "1d8",
+      "type": "force"
+     }
+    ],
+    "attack": true,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Includes immediate attack and later bonus-action attacks; concentration follows supplied spell data."
+  }
+ },
+ "speak-with-dead": {
+  "ability": {
+   "name": "Speak with Dead",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Non-combat interrogation effect; corpse answers up to five questions."
+  }
+ },
+ "sequester": {
+  "ability": {
+   "name": "Sequester",
+   "cost": "action",
+   "kind": "control",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "condition": {
+    "name": "unconscious",
+    "duration": 100000,
+    "save_ends": false,
+    "breaks_on_damage": true
+   },
+   "concentration": false,
+   "duration": 100000,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Models willing creature's suspended animation; invisibility and anti-divination effects are omitted."
+  }
+ },
+ "simulacrum": {
+  "ability": {
+   "name": "Simulacrum",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 0,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons a weakened copy using the target's statistics; copied statistics are not represented."
+  }
+ },
+ "speak-with-plants": {
+  "ability": {
+   "name": "Speak with Plants",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 30
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Communication and terrain manipulation provide no meaningful combat effect in a simple simulator."
+  }
+ },
+ "slow": {
+  "ability": {
+   "name": "Slow",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 40
+   },
+   "condition": {
+    "name": "slowed",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Slowed condition approximates halved Speed, AC and Dexterity penalties, action restriction, and no Reactions."
+  }
+ },
+ "sleet-storm": {
+  "ability": {
+   "name": "Sleet Storm",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 150,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "cylinder",
+    "size": 20
+   },
+   "condition": {
+    "name": "prone",
+    "duration": 1,
+    "save_ends": false,
+    "save_ability": "dex",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Area obscurity, difficult terrain, doused flames, and concentration loss are approximated or omitted."
+  }
+ },
+ "sorcerous-burst": {
+  "ability": {
+   "name": "Sorcerous Burst",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "force"
+    }
+   ],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Damage type is chosen; exploding d8 damage is approximated and omitted."
+  }
+ },
+ "sleep": {
+  "ability": {
+   "name": "Sleep",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 5
+   },
+   "condition": {
+    "name": "incapacitated",
+    "duration": 1,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Second failed save causes unconsciousness, approximated as repeated incapacitation."
+  }
+ },
+ "spider-climb": {
+  "ability": {
+   "name": "Spider Climb",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 600,
+   "upcast": {
+    "extra_targets": 1,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants climbing and ceiling movement; not represented as a combat mechanic."
+  }
+ },
+ "spike-growth": {
+  "ability": {
+   "name": "Spike Growth",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "2d4",
+      "type": "piercing"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Difficult terrain and camouflage are approximated; recurring damage triggers when creatures move 5 feet in the area."
+  }
+ },
+ "stone-shape": {
+  "ability": {
+   "name": "Stone Shape",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Shapes stone; no direct combat effect."
+  }
+ },
+ "spirit-guardians": {
+  "ability": {
+   "name": "Spirit Guardians",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 15
+   },
+   "condition": {
+    "name": "slowed",
+    "duration": 10,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "3d8",
+      "type": "radiant"
+     }
+    ],
+    "save": {
+     "ability": "wis",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Radiant damage assumes good or neutral caster; evil casters deal necrotic damage instead."
+  }
+ },
+ "stoneskin": {
+  "ability": {
+   "name": "Stoneskin",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "bludgeoning",
+     "piercing",
+     "slashing"
+    ]
+   },
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": ""
+  }
+ },
+ "stinking-cloud": {
+  "ability": {
+   "name": "Stinking Cloud",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 90,
+   "rolls": 1,
+   "damage": [],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "condition": {
+    "name": "poisoned",
+    "duration": 1,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "con",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Poisoned condition approximates inability to take actions or bonus actions while in the cloud."
+  }
+ },
+ "telepathic-bond": {
+  "ability": {
+   "name": "Telepathic Bond",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 8,
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates long-range telepathic communication; no direct combat effect."
+  }
+ },
+ "suggestion": {
+  "ability": {
+   "name": "Suggestion",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "charmed",
+    "duration": 480,
+    "save_ends": false,
+    "save_ability": "wis",
+    "breaks_on_damage": true
+   },
+   "concentration": true,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Charmed target follows the suggested course of activity; completion may end the effect early."
+  }
+ },
+ "sunbeam": {
+  "ability": {
+   "name": "Sunbeam",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "6d8",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 60
+   },
+   "condition": {
+    "name": "blinded",
+    "duration": 1,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "action",
+    "damage": [
+     {
+      "dice": "6d8",
+      "type": "radiant"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Creates a new 60-foot line as an action each turn; sunlight illumination has no combat effect."
+  }
+ },
+ "starry-wisp": {
+  "ability": {
+   "name": "Starry Wisp",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d8",
+     "type": "radiant"
+    }
+   ],
+   "targets": 1,
+   "condition": {
+    "name": "outlined",
+    "duration": 2,
+    "save_ends": false,
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 2,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Outlined approximates emitting light and preventing benefits from invisibility."
+  }
+ },
+ "teleportation-circle": {
+  "ability": {
+   "name": "Teleportation Circle",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 0,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a temporary portal to a known permanent teleportation circle; no direct combat effect."
+  }
+ },
+ "thaumaturgy": {
+  "ability": {
+   "name": "Thaumaturgy",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Minor sensory effects and Intimidation advantage are not meaningfully represented in combat."
+  }
+ },
+ "sunburst": {
+  "ability": {
+   "name": "Sunburst",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "12d6",
+     "type": "radiant"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "condition": {
+    "name": "blinded",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "con",
+    "breaks_on_damage": false
+   },
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Also dispels magical darkness in the area."
+  }
+ },
+ "thunderwave": {
+  "ability": {
+   "name": "Thunderwave",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d8",
+     "type": "thunder"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 15
+   },
+   "concentration": false,
+   "duration": 1,
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Push effect and unsecured object interaction are omitted."
+  }
+ },
+ "storm-of-vengeance": {
+  "ability": {
+   "name": "Storm of Vengeance",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 5280,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "2d6",
+     "type": "thunder"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 300
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "4d6",
+      "type": "acid"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Later turns vary: lightning, hail, cold, deafening, obscured terrain, and weapon ranged attacks are approximated."
+  }
+ },
+ "telekinesis": {
+  "ability": {
+   "name": "Telekinesis",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "str",
+    "half": false
+   },
+   "targets": 1,
+   "condition": {
+    "name": "restrained",
+    "duration": 2,
+    "save_ends": false,
+    "save_ability": "str",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "action",
+    "damage": [],
+    "save": {
+     "ability": "str",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Object manipulation and movement are approximated as single-target control."
+  }
+ },
+ "teleport": {
+  "ability": {
+   "name": "Teleport",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 9,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Primarily transports creatures; destination mishaps are not modeled."
+  }
+ },
+ "tiny-hut": {
+  "ability": {
+   "name": "Tiny Hut",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "area": {
+    "shape": "emanation",
+    "size": 10
+   },
+   "concentration": false,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Protective shelter with no direct combat effect."
+  }
+ },
+ "summon-dragon": {
+  "ability": {
+   "name": "Summon Dragon",
+   "cost": "action",
+   "kind": "summon",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Summons a dragon spirit with Rend, Breath Weapon, resistances, and shared chosen resistance."
+  }
+ },
+ "tongues": {
+  "ability": {
+   "name": "Tongues",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants universal language comprehension and communication; no direct combat effect."
+  }
+ },
+ "transport-via-plants": {
+  "ability": {
+   "name": "Transport via Plants",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 10,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a temporary plant-to-plant portal; no direct combat effect."
+  }
+ },
+ "tree-stride": {
+  "ability": {
+   "name": "Tree Stride",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Provides specialized tree teleportation and movement; not meaningfully represented in simple combat."
+  }
+ },
+ "symbol": {
+  "ability": {
+   "name": "Symbol",
+   "cost": "action",
+   "kind": "save",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d10",
+     "type": "necrotic"
+    }
+   ],
+   "save": {
+    "ability": "con",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 60
+   },
+   "concentration": false,
+   "duration": 100,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "10d10",
+      "type": "necrotic"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Represents Death glyph; other glyph effects and delayed triggering are omitted."
+  }
+ },
+ "true-seeing": {
+  "ability": {
+   "name": "True Seeing",
+   "cost": "action",
+   "kind": "utility",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants truesight, which is not represented as a combat effect."
+  }
+ },
+ "true-resurrection": {
+  "ability": {
+   "name": "True Resurrection",
+   "cost": "action",
+   "kind": "heal",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Restores a dead creature to full hit points; resurrection, restoration, and body replacement are not modeled."
+  }
+ },
+ "time-stop": {
+  "ability": {
+   "name": "Time Stop",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants 1d4+1 consecutive turns, which this schema cannot represent."
+  }
+ },
+ "unseen-servant": {
+  "ability": {
+   "name": "Unseen Servant",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Creates a mindless servant for simple tasks; it cannot attack."
+  }
+ },
+ "true-strike": {
+  "ability": {
+   "name": "True Strike",
+   "cost": "action",
+   "kind": "attack",
+   "melee": false,
+   "range": 0,
+   "rolls": 1,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Makes one weapon attack; weapon damage and attack range depend on the weapon used."
+  }
+ },
+ "true-polymorph": {
+  "ability": {
+   "name": "True Polymorph",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Transformation and temporary hit points are approximated; full-hour concentration can make the effect permanent."
+  }
+ },
+ "vitriolic-sphere": {
+  "ability": {
+   "name": "Vitriolic Sphere",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 150,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d4",
+     "type": "acid"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 20
+   },
+   "concentration": false,
+   "duration": 1,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d4",
+      "type": "acid"
+     }
+    ],
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "2d4",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Failed saves take 5d4 acid damage at the end of the target's next turn."
+  }
+ },
+ "vicious-mockery": {
+  "ability": {
+   "name": "Vicious Mockery",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 60,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "1d6",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": false
+   },
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": true,
+   "support": "approx",
+   "notes": "Disadvantage on the target's next attack is not directly representable."
+  }
+ },
+ "wall-of-force": {
+  "ability": {
+   "name": "Wall of Force",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": true,
+   "duration": 100,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates an impassable invisible barrier; wall geometry and forced repositioning are approximated."
+  }
+ },
+ "wall-of-fire": {
+  "ability": {
+   "name": "Wall of Fire",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "5d8",
+     "type": "fire"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 60
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d8",
+      "type": "fire"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates the wall as a 60-foot line; recurring damage represents the selected side and entry or end-turn triggers."
+  }
+ },
+ "vampiric-touch": {
+  "ability": {
+   "name": "Vampiric Touch",
+   "cost": "action",
+   "kind": "attack",
+   "melee": true,
+   "range": 5,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "3d6",
+     "type": "necrotic"
+    }
+   ],
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "action",
+    "damage": [
+     {
+      "dice": "3d6",
+      "type": "necrotic"
+     }
+    ],
+    "attack": true,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Healing equals half necrotic damage dealt and cannot be represented precisely."
+  }
+ },
+ "water-breathing": {
+  "ability": {
+   "name": "Water Breathing",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 10,
+   "concentration": false,
+   "duration": 14400,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Grants underwater breathing; no meaningful combat effect."
+  }
+ },
+ "water-walk": {
+  "ability": {
+   "name": "Water Walk",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 10,
+   "concentration": false,
+   "duration": 60,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Allows chosen creatures to move across liquid surfaces; no meaningful combat effect modeled."
+  }
+ },
+ "tsunami": {
+  "ability": {
+   "name": "Tsunami",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 5280,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "6d10",
+     "type": "bludgeoning"
+    }
+   ],
+   "save": {
+    "ability": "str",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 300
+   },
+   "concentration": true,
+   "duration": 6,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d10",
+      "type": "bludgeoning"
+     }
+    ],
+    "save": {
+     "ability": "str",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Wall dimensions and decreasing later-round damage are approximated as a 300-foot cube with recurring 5d10 damage."
+  }
+ },
+ "warding-bond": {
+  "ability": {
+   "name": "Warding Bond",
+   "cost": "action",
+   "kind": "buff",
+   "melee": true,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "buff": {
+    "save_bonus": "1",
+    "ac": 1,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "all"
+    ]
+   },
+   "concentration": false,
+   "duration": 600,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Damage sharing with the caster is not represented; resistance, AC, and saving throw bonuses are captured."
+  }
+ },
+ "wall-of-thorns": {
+  "ability": {
+   "name": "Wall of Thorns",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "7d8",
+     "type": "piercing"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 60
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "7d8",
+      "type": "slashing"
+     }
+    ],
+    "save": {
+     "ability": "dex",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "1d8",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Approximates the wall as a 60-foot line; recurring damage applies when entering or ending a turn in it."
+  }
+ },
+ "wall-of-stone": {
+  "ability": {
+   "name": "Wall of Stone",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 100
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Creates a configurable stone barrier; Dexterity save only applies to creatures enclosed by the wall."
+  }
+ },
+ "wall-of-ice": {
+  "ability": {
+   "name": "Wall of Ice",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d6",
+     "type": "cold"
+    }
+   ],
+   "save": {
+    "ability": "dex",
+    "half": true
+   },
+   "targets": 1,
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d6",
+      "type": "cold"
+     }
+    ],
+    "save": {
+     "ability": "con",
+     "half": true
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "upcast": {
+    "dice": "2d6",
+    "extra_targets": 0,
+    "extra_rolls": 0
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Recurring damage represents passing through a breached wall; wall shape, object durability, and push are approximated."
+  }
+ },
+ "web": {
+  "ability": {
+   "name": "Web",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "dex",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "cube",
+    "size": 20
+   },
+   "condition": {
+    "name": "restrained",
+    "duration": 600,
+    "save_ends": false,
+    "save_ability": "dex",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 600,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "dex",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Recurring entry/start saves and Athletics escape approximated; flammable webs' conditional fire damage omitted."
+  }
+ },
+ "weird": {
+  "ability": {
+   "name": "Weird",
+   "cost": "action",
+   "kind": "save",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "10d10",
+     "type": "psychic"
+    }
+   ],
+   "save": {
+    "ability": "wis",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 30
+   },
+   "condition": {
+    "name": "frightened",
+    "duration": 10,
+    "save_ends": true,
+    "save_ability": "wis",
+    "breaks_on_damage": false
+   },
+   "concentration": true,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [
+     {
+      "dice": "5d10",
+      "type": "psychic"
+     }
+    ],
+    "save": {
+     "ability": "wis",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "full",
+   "notes": "Targets re-save at end of each turn; failed saves deal recurring psychic damage, successful saves end the spell."
+  }
+ },
+ "wind-wall": {
+  "ability": {
+   "name": "Wind Wall",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 120,
+   "rolls": 1,
+   "damage": [
+    {
+     "dice": "4d8",
+     "type": "bludgeoning"
+    }
+   ],
+   "save": {
+    "ability": "str",
+    "half": true
+   },
+   "targets": 1,
+   "area": {
+    "shape": "line",
+    "size": 50
+   },
+   "concentration": true,
+   "duration": 10,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Captures initial damage and saving throw; ongoing projectile deflection and movement barrier are approximated."
+  }
+ },
+ "word-of-recall": {
+  "ability": {
+   "name": "Word of Recall",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 5,
+   "rolls": 0,
+   "damage": [],
+   "targets": 6,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Teleports willing creatures to a prepared sanctuary; treated as utility outside combat."
+  }
+ },
+ "wind-walk": {
+  "ability": {
+   "name": "Wind Walk",
+   "cost": "action",
+   "kind": "buff",
+   "melee": false,
+   "range": 30,
+   "rolls": 0,
+   "damage": [],
+   "targets": 11,
+   "buff": {
+    "ac": 0,
+    "advantage_attacks": false,
+    "extra_attack": false,
+    "resistances": [
+     "bludgeoning",
+     "piercing",
+     "slashing"
+    ]
+   },
+   "concentration": false,
+   "duration": 480,
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Flight, hover, prone immunity, and action restriction are not fully represented."
+  }
+ },
+ "wish": {
+  "ability": {
+   "name": "Wish",
+   "cost": "action",
+   "kind": "utility",
+   "melee": false,
+   "range": 0,
+   "rolls": 0,
+   "damage": [],
+   "targets": 1,
+   "concentration": false,
+   "duration": 1,
+   "cantrip_scaling": false,
+   "support": "none",
+   "notes": "Choice-dependent spell duplication and reality alteration are not represented."
+  }
+ },
+ "zone-of-truth": {
+  "ability": {
+   "name": "Zone of Truth",
+   "cost": "action",
+   "kind": "control",
+   "melee": false,
+   "range": 60,
+   "rolls": 0,
+   "damage": [],
+   "save": {
+    "ability": "cha",
+    "half": false
+   },
+   "targets": 1,
+   "area": {
+    "shape": "sphere",
+    "size": 15
+   },
+   "concentration": false,
+   "duration": 10,
+   "recurring": {
+    "trigger": "auto",
+    "damage": [],
+    "save": {
+     "ability": "cha",
+     "half": false
+    },
+    "attack": false,
+    "targets": 1
+   },
+   "cantrip_scaling": false,
+   "support": "approx",
+   "notes": "Truth restriction is approximated as a recurring Charisma save without a listed condition."
+  }
+ }
+}

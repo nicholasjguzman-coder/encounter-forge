@@ -1,4 +1,4 @@
-"""Build the self-contained report.html from report/report_template.html.
+"""Build the self-contained report.html and slides.html from the templates in report/.
 
 Fills in measured tables from report_assets/*.json and inlines every image as a base64 data URI,
 so the HTML opens by double-click on any computer.
@@ -49,11 +49,19 @@ def main():
         mime = mimetypes.guess_type(p.name)[0] or "image/png"
         return f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
 
+    svg = re.search(r"<svg viewBox=.*?</svg>", s, re.S).group(0)  # Figure 1, reused on the agents slide
     s = re.sub(r"\{\{img:([^}]+)\}\}", inline, s)
-    left = re.findall(r"\{\{[^}]+\}\}", s)
-    assert not left, f"unfilled placeholders: {left}"
-    out = ROOT / "report.html"
-    out.write_text(s)
+    write(ROOT / "report.html", s)
+
+    slides = (ROOT / "report" / "slides_template.html").read_text().replace("{{SVG}}", svg)
+    slides = re.sub(r"\{\{img:([^}]+)\}\}", inline, slides)
+    write(ROOT / "slides.html", slides)
+
+
+def write(out, text):
+    left = re.findall(r"\{\{[^}]+\}\}", text)
+    assert not left, f"unfilled placeholders in {out.name}: {left}"
+    out.write_text(text)
     print(f"wrote {out} ({out.stat().st_size / 1e6:.1f} MB)")
 
 

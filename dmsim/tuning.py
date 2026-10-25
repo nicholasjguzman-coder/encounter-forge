@@ -40,7 +40,7 @@ def tune(edition, party, monsters, settings, base_results, target_name, target, 
             progress(i + 1, max_iters)
         try:
             prop = tuner_propose(edition, party, cur["monsters"], cur["start_rounds"], cur["surprise"], cur["results"],
-                                 {"name": target_name, **target}, history, meter)
+                                 {"name": target_name, **target}, history, meter, allies=settings.allies)
         except BudgetExceeded as e:
             attempts.append({"error": str(e)})
             break
@@ -48,7 +48,8 @@ def tune(edition, party, monsters, settings, base_results, target_name, target, 
             history.append({"proposal": "invalid", "error": str(e)[:200]})
             continue
         s2 = Settings(edition=edition, start_rounds=prop["start_rounds"], surprise=prop["surprise"],
-                      max_rounds=settings.max_rounds, tactics=settings.tactics, item_effects=settings.item_effects)
+                      max_rounds=settings.max_rounds, tactics=settings.tactics, item_effects=settings.item_effects,
+                      allies=settings.allies)
         r = simulate(edition, [dict(p) for p in party], prop["monsters"], s2, n=n, seed=11 + i)
         att = {**prop, "results": r, "on_target": on_target(r, target), "distance": distance(r, target)}
         attempts.append(att)

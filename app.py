@@ -99,6 +99,38 @@ def show_version(E, R, ver):
     R["approx"] = agents.approximations(E, ver["monsters"])
 
 
+def creature_rows(E, prefix, rows, v, by_idx, noun, add_label):
+    """Row editor for a list of SRD creatures (monster or ally): dropdown, count, remove button."""
+    mwidths = [2.6, 0.8, 0.55]
+    mon_ids = [i for _, i, _ in data.monster_names(E)]
+    if rows:
+        for h, label in zip(st.columns(mwidths), [noun, "Count", ""]):
+            h.caption(label)
+    out, remove = [], None
+    for row in rows:
+        k = f"{E}_{prefix}{row['id']}_{v}"
+        cc = st.columns(mwidths, vertical_alignment="center")
+        idx = cc[0].selectbox(noun, mon_ids, index=mon_ids.index(row["index"]) if row["index"] in mon_ids else 0,
+                              format_func=lambda i: f"{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
+                              label_visibility="collapsed")
+        cnt = cc[1].number_input("Count", 1, 20, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
+        if cc[2].button("✕", key=f"{k}_del", help=f"Remove this {noun.lower()}", width="stretch"):
+            remove = row["id"]
+        row.update(index=idx, count=int(cnt))
+        out.append({"index": idx, "count": int(cnt)})
+    if remove is not None:
+        rows[:] = [r for r in rows if r["id"] != remove]
+        st.rerun()
+    if st.button(add_label, key=f"{E}_add{prefix}"):
+        rows.append({"id": max([r["id"] for r in rows] or [-1]) + 1,
+                     "index": rows[-1]["index"] if rows else ("brown-bear" if "brown-bear" in mon_ids else mon_ids[0]),
+                     "count": 1})
+        st.rerun()
+    if out:
+        st.caption(" · ".join(f"{m['count']}× {by_idx[m['index']][0]} (CR {by_idx[m['index']][1]})" for m in out))
+    return out
+
+
 def load_into_form(E, ver):
     st.session_state[f"{E}_mon_rows"] = [{"id": i, "index": m["index"], "count": m["count"]} for i, m in enumerate(ver["monsters"])]
     st.session_state[f"{E}_dist_init"] = ver["start_rounds"]
@@ -150,7 +182,8 @@ with st.sidebar:
             "- Area spells hit the number of targets from the DMG *Targets in Areas of Effect* table.\n"
             "- PCs start with full resources. **Resources used** weighs each spell slot by its level plus class "
             "features, potions and item charges (Hit Dice excluded). **HP expended** is reported separately.\n"
-            "- A **TPK** means every PC is at 0 HP or dead at the same time.")
+            "- A **TPK** means every PC is at 0 HP or dead at the same time (and, if you add allies, every ally is down too).\n"
+            "- Allies are SRD creatures on the party's side. They act like monsters and aren't counted in the official XP rating.")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -187,6 +220,9 @@ def render(edition):
                 if parsed["monsters"]:
                     st.session_state[f"{E}_mon_rows"] = [{"id": i, "index": m["index"], "count": m["count"]}
                                                          for i, m in enumerate(parsed["monsters"])]
+                if parsed.get("allies"):
+                    st.session_state[f"{E}_ally_rows"] = [{"id": i, "index": m["index"], "count": m["count"]}
+                                                          for i, m in enumerate(parsed["allies"])]
                 if parsed["start_rounds"] is not None:
                     st.session_state[f"{E}_dist_init"] = parsed["start_rounds"]
                 if parsed["surprise"]:
@@ -253,33 +289,11 @@ def render(edition):
                             unsafe_allow_html=True)
     with c2:
         st.markdown("### 👹 The monsters")
-        mwidths = [2.6, 0.8, 0.55]
         default_rows = [{"id": i, "index": by_name[n], "count": k} for i, (n, k) in enumerate(DEFAULT_MONSTERS[E])]
-        mrows = ss(f"{E}_mon_rows", default_rows)
-        mon_ids = [i for _, i, _ in data.monster_names(E)]
-        for h, label in zip(st.columns(mwidths), ["Monster", "Count", ""]):
-            h.caption(label)
-        monsters, mremove = [], None
-        for row in mrows:
-            k = f"{E}_m{row['id']}_{v}"
-            cc = st.columns(mwidths, vertical_alignment="center")
-            idx = cc[0].selectbox("Monster", mon_ids, index=mon_ids.index(row["index"]) if row["index"] in mon_ids else 0,
-                                  format_func=lambda i: f"{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
-                                  label_visibility="collapsed")
-            cnt = cc[1].number_input("Count", 1, 20, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
-            if cc[2].button("✕", key=f"{k}_del", help="Remove this monster", width="stretch"):
-                mremove = row["id"]
-            row.update(index=idx, count=int(cnt))
-            monsters.append({"index": idx, "count": int(cnt)})
-        if mremove is not None:
-            mrows[:] = [r for r in mrows if r["id"] != mremove]
-            st.rerun()
-        if st.button("➕ Add a monster", key=f"{E}_addmon"):
-            mrows.append({"id": max([r["id"] for r in mrows] or [-1]) + 1, "index": mrows[-1]["index"] if mrows else mon_ids[0],
-                          "count": 1})
-            st.rerun()
-        if monsters:
-            st.caption(" · ".join(f"{m['count']}× {by_idx[m['index']][0]} (CR {by_idx[m['index']][1]})" for m in monsters))
+        monsters = creature_rows(E, "mon", ss(f"{E}_mon_rows", default_rows), v, by_idx, "Monster", "➕ Add a monster")
+        st.markdown("### 🤝 Allies")
+        st.caption("Creatures fighting on the party's side: companions, summons, hirelings (optional).")
+        allies = creature_rows(E, "ally", ss(f"{E}_ally_rows", []), v, by_idx, "Ally", "➕ Add an ally")
 
     # ---- 3. Conditions ----------------------------------------------------------------------
     st.markdown("### 🗺️ Battlefield & extras")
@@ -301,7 +315,7 @@ def render(edition):
                                     placeholder="e.g. The goblins flee when the bugbear dies; the cultists focus the healer.")
 
     R0 = st.session_state.get(f"{E}_result")
-    same_enc = bool(R0) and R0["party"] == party and R0["monsters"] == monsters
+    same_enc = bool(R0) and R0["party"] == party and R0["monsters"] == monsters and R0.get("allies", []) == allies
     changed = same_enc and (start_rounds != R0["start_rounds"] or surprise != R0["surprise"]
                             or items_text != R0.get("items_text", "") or tactics_text != R0.get("tactics_text", ""))
     b1, b2 = st.columns([1, 2.2])
@@ -310,9 +324,9 @@ def render(edition):
                       help="Keeps the same party and monsters and re-runs only the simulation (plus the Items or Tactician "
                            "agent if you edited that box). Adds a row to the version history.")
     if R0 and not same_enc:
-        b2.caption("Party or monsters changed since the last run: use 🎲 Run the playtest.")
+        b2.caption("Party, monsters or allies changed since the last run: use 🎲 Run the playtest.")
     if run:
-        run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text)
+        run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text, allies)
     if quick:
         quick_resim(E, R0, start_rounds, surprise, items_text, tactics_text)
     res = st.session_state.get(f"{E}_result")
@@ -320,7 +334,8 @@ def render(edition):
         show_results(E, res)
 
 
-def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text):
+def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text, allies=()):
+    allies = list(allies)
     meter = Meter(cap_usd=cap, label=f"run-{int(time.time())}")
     safety = []
     tactics = {"monster_targeting": "random", "finish_downed": False, "flee_at": 0.0, "per_monster": {},
@@ -343,10 +358,10 @@ def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics
             clean_t, ev = agents.guard_text(tactics_text, "tactics notes")
             safety += ev
             status.write("🧠 Tactician is deciding how each side fights...")
-            tactics = agents.tactician(E, party, monsters, clean_t, meter)
+            tactics = agents.tactician(E, party, monsters, clean_t, meter, allies=allies)
         settings = Settings(edition=E, start_rounds=start_rounds, surprise=surprise,
                             tactics=Tactics(**{k: v for k, v in tactics.items() if k != "rationale"}),
-                            item_effects=items["effects"])
+                            item_effects=items["effects"], allies=allies)
         status.write(f"🎲 Simulating {n_sims:,} fights...")
         t0 = time.time()
         r = simulate(E, party, monsters, settings, n=n_sims)
@@ -357,7 +372,7 @@ def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics
         briefing = ""
         if use_ai:
             status.write("📜 Explainer is writing your briefing...")
-            briefing = agents.explain(E, party, monsters, r, official, tactics, approx, meter)
+            briefing = agents.explain(E, party, monsters, r, official, tactics, approx, meter, allies=allies)
         status.update(label=f"Done: {n_sims:,} fights in {sim_s:.1f}s", state="complete", expanded=False)
     except BudgetExceeded as e:
         status.update(label="Stopped: spending cap reached", state="error")
@@ -372,13 +387,13 @@ def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics
         return
     record_meter(meter)
     prev = st.session_state.get(f"{E}_result")
-    if prev and prev["party"] == party:  # same party: keep the version history going
+    if prev and prev["party"] == party and prev.get("allies", []) == allies:  # same side: keep the version history going
         R = prev
         R["safety"] = R["safety"] + safety
         R["meter"] = R["meter"] + meter.calls
     else:
         R = {"party": party, "log": [], "safety": safety, "meter": meter.calls, "tune_errors": []}
-    R.update(tactics=tactics, items=items, items_text=items_text, tactics_text=tactics_text, sim_s=sim_s)
+    R.update(tactics=tactics, items=items, items_text=items_text, tactics_text=tactics_text, sim_s=sim_s, allies=allies)
     ver = add_version(R, new_version("Playtest", monsters, start_rounds, surprise, r, settings))
     show_version(E, R, ver)
     R["briefing"], R["briefing_for"] = briefing, ver["num"]
@@ -413,11 +428,11 @@ def quick_resim(E, R, start_rounds, surprise, items_text, tactics_text):
                 if use_ai:
                     clean_t, ev = agents.guard_text(tactics_text, "tactics notes")
                     R["safety"] = R["safety"] + ev
-                    R["tactics"] = agents.tactician(E, R["party"], R["monsters"], clean_t, meter)
+                    R["tactics"] = agents.tactician(E, R["party"], R["monsters"], clean_t, meter, allies=R.get("allies", []))
             t = R["tactics"]
             settings = Settings(edition=E, start_rounds=start_rounds, surprise=surprise,
                                 tactics=Tactics(**{k: v for k, v in t.items() if k != "rationale"}),
-                                item_effects=R["items"]["effects"])
+                                item_effects=R["items"]["effects"], allies=R.get("allies", []))
             t0 = time.time()
             r = simulate(E, R["party"], R["monsters"], settings, n=n_sims)
             R["sim_s"] = time.time() - t0
@@ -447,7 +462,8 @@ def show_results(E, R):
     r, off = R["results"], R["official"]
     st.divider()
     st.markdown(f"## 📊 Results <span class='small'>· version #{R.get('current', 1)}: {mon_summary(E, R['monsters'])}, "
-                f"start {R['start_rounds']} rd, surprise: {R['surprise']}</span>", unsafe_allow_html=True)
+                f"start {R['start_rounds']} rd, surprise: {R['surprise']}"
+                + (f", allies: {mon_summary(E, R['allies'])}" if R.get("allies") else "") + "</span>", unsafe_allow_html=True)
     tier = simulated_tier(r)
     st.markdown(
         f"Simulated difficulty: {tier_badge(tier)} &nbsp; Official XP rating: {tier_badge(off['rating'])}"
@@ -468,7 +484,8 @@ def show_results(E, R):
                     meter = Meter(cap_usd=cap, label=f"brief-{int(time.time())}")
                     try:
                         with st.spinner("Explainer is writing your briefing..."):
-                            R["briefing"] = agents.explain(E, R["party"], R["monsters"], r, off, R["tactics"], R["approx"], meter)
+                            R["briefing"] = agents.explain(E, R["party"], R["monsters"], r, off, R["tactics"], R["approx"], meter,
+                                                           allies=R.get("allies", []))
                         R["briefing_for"] = R["current"]
                     except BudgetExceeded as e:
                         st.error(f"🛡️ {e}")
@@ -499,6 +516,11 @@ def show_results(E, R):
         mk = r["monsters"]
         st.dataframe(pd.DataFrame([{"Monster": k, "Defeated in": pct(v["p_killed"])} for k, v in mk.items()]),
                      hide_index=True, width="stretch", height=min(250, 38 + 35 * len(mk)))
+        ak = r.get("allies") or {}
+        if ak:
+            st.markdown("#### 🤝 Allies lost")
+            st.dataframe(pd.DataFrame([{"Ally": k, "Killed in": pct(v["p_killed"])} for k, v in ak.items()]),
+                         hide_index=True, width="stretch", height=min(250, 38 + 35 * len(ak)))
 
     with st.expander("🧠 Tactics, items and approximations"):
         t = R["tactics"]
@@ -559,7 +581,7 @@ def show_results(E, R):
                 continue
             s2 = R["settings"]
             settings = Settings(edition=E, start_rounds=a["start_rounds"], surprise=a["surprise"], max_rounds=s2.max_rounds,
-                                tactics=s2.tactics, item_effects=s2.item_effects)
+                                tactics=s2.tactics, item_effects=s2.item_effects, allies=s2.allies)
             added.append(add_version(R, new_version(f"Tuner → {target_name}", a["monsters"], a["start_rounds"], a["surprise"],
                                                     a["results"], settings, target=target_name, rationale=a.get("rationale", ""))))
         if added:

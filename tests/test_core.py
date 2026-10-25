@@ -103,3 +103,13 @@ def test_assassin_beats_thief_on_surprised_foes():
     thief = simulate("2014", [{"cls": "rogue", "level": 7, "count": 4, "subclass": "Thief"}], mons, s, n=400)
     assassin = simulate("2014", [{"cls": "rogue", "level": 7, "count": 4, "subclass": "Assassin"}], mons, s, n=400)
     assert assassin["avg_rounds"] < thief["avg_rounds"]
+
+
+def test_allies_help_the_party():
+    party = [{"cls": c, "level": 3} for c in ("fighter", "cleric", "wizard", "rogue")]
+    mons = [{"index": "owlbear", "count": 2}]
+    alone = simulate("2014", party, mons, Settings(edition="2014"), n=300)
+    helped = simulate("2014", party, mons, Settings(edition="2014", allies=[{"index": "brown-bear", "count": 2}]), n=300)
+    assert helped["p_any_down"] < alone["p_any_down"]
+    assert set(helped["allies"]) == {"Ally Brown Bear 1", "Ally Brown Bear 2"}
+    assert set(helped["pcs"]) == set(alone["pcs"])  # allies never count as PCs

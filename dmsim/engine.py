@@ -42,14 +42,16 @@ class Settings:
     max_rounds: int = 20
     tactics: Tactics = field(default_factory=Tactics)
     item_effects: list = field(default_factory=list)  # validated modifiers from the Items agent
+    allies: list = field(default_factory=list)  # [{"index": monster id, "count": n}] fighting for the party
 
 
 class C:
     """A combatant (PC or monster). Attributes are plain fields for speed."""
 
-    def __init__(self, name, side):
+    def __init__(self, name, side, pc=None):
         self.name, self.side = name, side
-        self.is_pc = side == "party"
+        self.friendly = side == "party"  # on the players' side (PCs and allied creatures)
+        self.is_pc = self.friendly if pc is None else pc  # uses player-character rules (death saves, class features)
         self.conditions = {}  # name -> dict(rounds, save, dc, source_effect, breaks)
         self.buffs = []  # (Buff dict, effect)
         self.effects = []  # effects this creature owns (concentration etc.)
@@ -125,10 +127,10 @@ def _ability_from_spell(spell, caster_dc, caster_attack):
     return a
 
 
-def make_monster(edition, index, label):
+def make_monster(edition, index, label, side="enemies"):
     base = data.monster_base(edition, index)
     comp = copy.deepcopy(data.compiled(edition, "monsters")[index])
-    c = C(label, "enemies")
+    c = C(label, side, pc=False)
     c.index, c.cr, c.xp, c.ctype = index, base["cr"], base["xp"], base["type"]
     c.size = base["size"]
     c.max_hp = c.hp = base["hp"]
@@ -240,7 +242,7 @@ def apply_item_effects(combatants, effects, rng_label=""):
                     c.resources["potion"] = c.resources_max["potion"]
             continue
         targets = [c for c in combatants if (
-            (who == "party" and c.is_pc) or (who == "enemies" and not c.is_pc) or
+            (who == "party" and c.is_pc) or (who == "enemies" and not c.friendly) or
             (who not in ("party", "enemies") and c.name.lower() == who.lower()))]
         if not targets and who not in ("party", "enemies"):
             targets = [c for c in combatants if c.is_pc and who.lower() in c.name.lower()]
@@ -304,10 +306,10 @@ class Battle:
 
     # -- geometry --
     def foes(self, c):
-        return [x for x in (self.enemies if c.is_pc else self.party) if x.present]
+        return [x for x in (self.enemies if c.friendly else self.party) if x.present]
 
     def allies(self, c):
-        return [x for x in (self.party if c.is_pc else self.enemies) if x.present]
+        return [x for x in (self.party if c.friendly else self.enemies) if x.present]
 
     @staticmethod
     def dist(a, b):
@@ -332,7 +334,7 @@ class Battle:
                 b += roll(self.rng, buff["save_bonus"])
             if buff.get("save_penalty"):
                 b -= roll(self.rng, buff["save_penalty"])
-        if c.is_pc:
+        if c.friendly:
             aura = max([p.features.get("aura", 0) for p in self.party if p.up and p.cls == "paladin"] or [0])
             b += aura
         if "slowed" in c.conditions and ability == "dex":
@@ -395,7 +397,7 @@ class Battle:
             return 0
         if dtype in tgt.resist or (not magical and dtype in tgt.resist_nm) or \
                 any(dtype in (b.get("resistances") or []) for b, _ in tgt.buffs) or \
-                self.rage_resists(tgt, dtype) or (spell and tgt.is_pc and self.warded()):
+                self.rage_resists(tgt, dtype) or (spell and tgt.friendly and self.warded()):
             amount //= 2
         if dtype in tgt.vuln:
             amount *= 2
@@ -537,7 +539,7 @@ class Battle:
     def pick_target(self, c, cands):
         if not cands:
             return None
-        pol = self.t.party_targeting if c.is_pc else \
+        pol = self.t.party_targeting if c.friendly else \
             self.t.per_monster.get(getattr(c, "index", ""), {}).get("targeting", self.t.monster_targeting)
         if pol == "focus_weakest":
             return min(cands, key=lambda x: (x.hp, x.ac))
@@ -553,7 +555,7 @@ class Battle:
 
     def targetable(self, c):
         foes = [f for f in self.foes(c) if f.up]
-        if not c.is_pc and self.t.finish_downed:
+        if not c.friendly and self.t.finish_downed:
             downed = [f for f in self.foes(c) if f.present and f.hp <= 0 and not f.dead]
             foes = foes or downed
         return foes
@@ -575,7 +577,8 @@ class Battle:
         rounds_needed = foes_hp / party_dpr
         lam = base / max(1.0, rounds_needed / 1.5)
         downs = sum(1 for p in self.party if p.present and p.hp <= 0)
-        hp_frac = sum(max(p.hp, 0) for p in self.party) / sum(p.max_hp for p in self.party)
+        pcs = [p for p in self.party if p.is_pc] or self.party
+        hp_frac = sum(max(p.hp, 0) for p in pcs) / sum(p.max_hp for p in pcs)
         if downs or hp_frac < 0.5:
             lam /= 2.5
         return lam
@@ -589,12 +592,12 @@ class Battle:
         for e in self.enemies:
             e.x = gap
         for c in self.all:
-            adv = -1 if (self.ed == "2024" and ((s.surprise == "party" and c.is_pc) or (s.surprise == "monsters" and not c.is_pc))) else 0
+            adv = -1 if (self.ed == "2024" and ((s.surprise == "party" and c.friendly) or (s.surprise == "monsters" and not c.friendly))) else 0
             c.initiative = d20(self.rng, adv) + c.init + self.rng.random() / 10
         order = sorted(self.all, key=lambda c: -c.initiative)
         surprised = set()
         if self.ed == "2014" and s.surprise != "none":
-            surprised = {id(c) for c in self.all if (c.is_pc if s.surprise == "party" else not c.is_pc)}
+            surprised = {id(c) for c in self.all if (c.friendly if s.surprise == "party" else not c.friendly)}
             for c in self.all:
                 if id(c) in surprised:
                     c.reaction = False
@@ -682,8 +685,8 @@ class Battle:
                     x.temp_hp = max(x.temp_hp, roll(self.rng, f"1d6+{c.level}"))
         if not c.up:
             return
-        flee = self.t.per_monster.get(getattr(c, "index", ""), {}).get("flee_at", self.t.flee_at) if not c.is_pc else 0
-        if not c.is_pc and flee > 0 and c.hp < c.max_hp * flee:
+        flee = self.t.per_monster.get(getattr(c, "index", ""), {}).get("flee_at", self.t.flee_at) if not c.friendly else 0
+        if not c.friendly and flee > 0 and c.hp < c.max_hp * flee:
             c.fled = True
             self.log(f"{c.name} flees")
             return
@@ -721,8 +724,8 @@ class Battle:
         c._vex_fresh = False
 
     def legendary_window(self, acted):
-        for m in self.enemies:
-            if m is acted or not m.legendary_max or m.legendary_points <= 0 or not m.can_act():
+        for m in self.all:
+            if m.is_pc or m is acted or not m.legendary_max or m.legendary_points <= 0 or not m.can_act():
                 continue
             best, best_v = None, 0
             used = getattr(m, "legendary_used", set())
@@ -793,7 +796,7 @@ class Battle:
         name = cd["name"]
         if name in tgt.cond_immune or name in tgt.conditions:
             return 0
-        if name == "frightened" and tgt.is_pc and any(p.up and p.features.get("aura_resist_fear") for p in self.party):
+        if name == "frightened" and tgt.friendly and any(p.up and p.features.get("aura_resist_fear") for p in self.party):
             return 0
         weight = {"paralyzed": 2.2, "stunned": 2.0, "banished": 1.8, "petrified": 2.0, "incapacitated": 1.4,
                   "unconscious": 2.0, "charmed": 0.9, "restrained": 0.8, "blinded": 0.7, "frightened": 0.5,
@@ -1112,7 +1115,7 @@ class Battle:
         name = cd["name"]
         if name in t.cond_immune:
             return
-        if name == "frightened" and t.is_pc and any(p.up and p.features.get("aura_resist_fear") for p in self.party):
+        if name == "frightened" and t.friendly and any(p.up and p.features.get("aura_resist_fear") for p in self.party):
             return
         if name == "banished" and t.cr is not None and False:
             return
@@ -1126,7 +1129,7 @@ class Battle:
     def attack_roll(self, c, a, t, magical, effect=None):
         melee = bool(a.get("melee"))
         adv = self.attack_adv(c, t, melee)
-        flare = self.flare_for(c, t) if not c.is_pc else None
+        flare = self.flare_for(c, t) if not c.friendly else None
         if flare:
             flare.reaction = False
             self.spend(flare, "warding_flare")
@@ -1224,7 +1227,7 @@ class Battle:
             return None
         for p in self.party:
             if p.up and p.reaction and p.resources.get("warding_flare", 0) > 0 and \
-                    (p is tgt or (self.ed == "2024" and tgt.is_pc)) and "blinded" not in att.cond_immune:
+                    (p is tgt or (self.ed == "2024" and tgt.friendly)) and "blinded" not in att.cond_immune:
                 return p
         return None
 
@@ -1707,7 +1710,7 @@ class Battle:
 # ----------------------------------------------------------------------------------------------
 # Monte Carlo driver
 # ----------------------------------------------------------------------------------------------
-def build_sides(edition, party_spec, monster_spec, item_effects):
+def build_sides(edition, party_spec, monster_spec, item_effects, ally_spec=()):
     party, counts = [], {}
     for p in party_spec:
         for i in range(p.get("count", 1)):
@@ -1722,8 +1725,14 @@ def build_sides(edition, party_spec, monster_spec, item_effects):
         for i in range(int(m.get("count", 1))):
             label = base_name if int(m.get("count", 1)) == 1 else f"{base_name} {i + 1}"
             enemies.append(make_monster(edition, m["index"], label))
-    apply_item_effects(party + enemies, item_effects)
-    return party, enemies
+    allies = []
+    for m in ally_spec:
+        base_name = data.raw(edition, "monsters")[m["index"]]["name"]
+        for i in range(int(m.get("count", 1))):
+            label = f"Ally {base_name}" if int(m.get("count", 1)) == 1 else f"Ally {base_name} {i + 1}"
+            allies.append(make_monster(edition, m["index"], label, side="party"))
+    apply_item_effects(party + allies + enemies, item_effects)
+    return party, enemies, allies
 
 
 def party_resource_weight(pc, used=None):
@@ -1742,17 +1751,19 @@ def party_resource_weight(pc, used=None):
 
 def simulate(edition, party_spec, monster_spec, settings, n=1000, seed=7, keep_logs=1):
     rng = random.Random(seed)
-    party0, enemies0 = build_sides(edition, party_spec, monster_spec, settings.item_effects)
+    party0, enemies0, allies0 = build_sides(edition, party_spec, monster_spec, settings.item_effects, settings.allies)
     outcomes = {"victory": 0, "tpk": 0, "stalemate": 0}
     any_down = multi_down = any_death = 0
     res_frac, hp_frac, rounds = [], [], []
     pc_stats = {p.name: {"dropped": 0, "died": 0, "hp_left": 0.0} for p in party0}
     mon_stats = {m.name: {"killed": 0} for m in enemies0}
+    ally_stats = {a.name: {"killed": 0} for a in allies0}
     logs = []
     for i in range(n):
         party = [copy.deepcopy(p) for p in party0]
         enemies = [copy.deepcopy(m) for m in enemies0]
-        b = Battle(party, enemies, settings, rng, log=i < keep_logs)
+        allies = [copy.deepcopy(a) for a in allies0]
+        b = Battle(party + allies, enemies, settings, rng, log=i < keep_logs)
         out = b.run()
         outcomes[out] += 1
         drops = sum(1 for p in party if p.dropped or p.dead)
@@ -1771,6 +1782,8 @@ def simulate(edition, party_spec, monster_spec, settings, n=1000, seed=7, keep_l
             st["hp_left"] += max(p.hp, 0) / p.max_hp
         for m in enemies:
             mon_stats[m.name]["killed"] += m.dead
+        for a in allies:
+            ally_stats[a.name]["killed"] += a.dead
         if i < keep_logs:
             logs.append(b.lines)
     tot_w = sum(party_resource_weight(p) for p in party0)
@@ -1790,5 +1803,6 @@ def simulate(edition, party_spec, monster_spec, settings, n=1000, seed=7, keep_l
         "res_hist": res_frac,
         "pcs": {k: {"p_dropped": v["dropped"] / n, "p_died": v["died"] / n, "avg_hp_left": v["hp_left"] / n} for k, v in pc_stats.items()},
         "monsters": {k: {"p_killed": v["killed"] / n} for k, v in mon_stats.items()},
+        "allies": {k: {"p_killed": v["killed"] / n} for k, v in ally_stats.items()},
         "sample_log": logs[0] if logs else [],
     }

@@ -69,7 +69,8 @@ def parse_encounter(edition, text, meter):
         "You are the Encounter Parser for a D&D combat simulator. " + DATA_FENCE +
         " Convert the description into JSON:\n"
         '{"party": [{"cls": one of ' + json.dumps(CLASSES) + ', "subclass": exact name from the subclass list or null, "level": 1-20, "count": int}],'
-        ' "monsters": [{"index": exact id from the catalog, "count": int}],'
+        ' "monsters": [{"index": exact id from the catalog, "count": int}] (creatures fighting AGAINST the party),'
+        ' "allies": [{"index": exact id from the catalog, "count": int}] (creatures fighting FOR the party: companions, summons, hirelings, guards on their side),'
         ' "start_rounds": int 0-5 or null (rounds a speed-30 creature dashing needs to reach melee; 0 = already in melee),'
         ' "surprise": "none"|"party"|"monsters"|null (which side is surprised),'
         ' "unmatched": [names you could not match], "notes": short str}\n'
@@ -95,9 +96,16 @@ def parse_encounter(edition, text, meter):
             monsters.append({"index": idx, "count": max(1, min(20, int(m.get("count") or 1)))})
         else:
             dropped.append(idx)
+    allies = []
+    for m in out.get("allies") or []:
+        idx = str(m.get("index", ""))
+        if idx in valid:
+            allies.append({"index": idx, "count": max(1, min(20, int(m.get("count") or 1)))})
+        else:
+            dropped.append(idx)
     sr = out.get("start_rounds")
     sur = out.get("surprise")
-    return {"party": party, "monsters": monsters,
+    return {"party": party, "monsters": monsters, "allies": allies,
             "start_rounds": None if sr is None else max(0, min(5, int(sr))),
             "surprise": sur if sur in ("none", "party", "monsters") else None,
             "unmatched": [str(x) for x in dropped if x], "notes": str(out.get("notes", ""))[:300]}
@@ -173,7 +181,7 @@ def monster_summary(edition, monsters):
     return "\n".join(rows)
 
 
-def tactician(edition, party, monsters, dm_notes, meter):
+def tactician(edition, party, monsters, dm_notes, meter, allies=()):
     system = (
         "You are the Tactician for a D&D combat simulator. Decide how each side fights, based on the monsters' "
         "nature (intelligence, type) and any DM notes. " + DATA_FENCE + " Reply with JSON:\n"
@@ -191,7 +199,9 @@ def tactician(edition, party, monsters, dm_notes, meter):
     ids = {m["index"] for m in monsters}
     user = (f"Monster ids: {sorted(ids)}\nEdition: {data.EDITIONS[edition]}\nParty: " + ", ".join(f"{p.get('count', 1)}x {p['cls']} {p['level']}" + (f" ({p['subclass']})" if p.get("subclass") else "")
                                                     for p in party) +
-            "\nMonsters:\n" + monster_summary(edition, monsters) + "\nDM notes:\n" + fence(dm_notes or "(none)"))
+            "\nMonsters (enemies):\n" + monster_summary(edition, monsters) +
+            ("\nAllied creatures fighting for the party (they use the party's targeting):\n" + monster_summary(edition, allies) if allies else "") +
+            "\nDM notes:\n" + fence(dm_notes or "(none)"))
     out = chat_json(f"tactician:{edition}", system, user, meter)
     pick = lambda v, opts, d: v if v in opts else d
     per = {}
@@ -218,13 +228,13 @@ def tactician(edition, party, monsters, dm_notes, meter):
 # ------------------------------------------------------------------------------------------------
 # Tuner
 # ------------------------------------------------------------------------------------------------
-def tuner_propose(edition, party, monsters, start_rounds, surprise, results, target, history, meter):
+def tuner_propose(edition, party, monsters, start_rounds, surprise, results, target, history, meter, allies=()):
     catalog = _monster_catalog(edition)
     system = (
         "You are the Encounter Tuner for a D&D combat simulator. The DM wants the encounter to hit a target difficulty. "
         "You see simulated results (from code, not guesses) and the history of earlier attempts. Propose ONE revised "
         "monster lineup (keep the encounter's theme and flavor; prefer small, sensible changes such as adding/removing a "
-        "creature, swapping for a stronger/weaker relative, or changing the starting distance). Never change the party. "
+        "creature, swapping for a stronger/weaker relative, or changing the starting distance). Never change the party or its allied creatures. "
         "Reply with JSON: {\"monsters\": [{\"index\": catalog id, \"count\": int}], \"start_rounds\": int 0-5, "
         "\"surprise\": \"none\"|\"party\"|\"monsters\", \"rationale\": one sentence a DM would understand}.\n"
         "Catalog: " + catalog
@@ -232,6 +242,7 @@ def tuner_propose(edition, party, monsters, start_rounds, surprise, results, tar
     user = json.dumps({
         "edition": data.EDITIONS[edition],
         "party": party,
+        "party_allies": list(allies),
         "target": target,
         "current": {"monsters": monsters, "start_rounds": start_rounds, "surprise": surprise},
         "current_results": _brief(results),
@@ -260,7 +271,7 @@ def _brief(r):
 # ------------------------------------------------------------------------------------------------
 # Explainer
 # ------------------------------------------------------------------------------------------------
-def explain(edition, party, monsters, results, official, tactics, approximations, meter):
+def explain(edition, party, monsters, results, official, tactics, approximations, meter, allies=()):
     system = (
         "You are the Explainer for a D&D encounter simulator. Write a short briefing for the Dungeon Master in "
         "plain English (markdown, <= 170 words): overall verdict, the 2-3 biggest drivers of danger (which monsters "
@@ -277,6 +288,7 @@ def explain(edition, party, monsters, results, official, tactics, approximations
         "results": res,
         "per_pc": {k: {kk: fmt(vv) for kk, vv in v.items()} for k, v in results["pcs"].items()},
         "per_monster": {k: {"defeated": fmt(v["p_killed"])} for k, v in results["monsters"].items()},
+        "allied_creatures": {k: {"killed": fmt(v["p_killed"])} for k, v in results.get("allies", {}).items()},
         "official_rating": {k: official[k] for k in ("rating", "adjusted_xp", "thresholds", "basis")},
         "tactics": tactics, "approximated_abilities": approximations[:12],
         "sample_fight_log": results["sample_log"][:30],

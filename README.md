@@ -10,6 +10,7 @@
 
 It compares these numbers with the official XP rating. It can also **tune** an encounter to a target difficulty:
 an AI agent proposes changes and the simulator re-checks each one.
+You can also add **allies**: SRD creatures fighting on the party's side.
 Every playtest, battlefield tweak and tuning attempt is kept in a **version history**. You can load any version
 back into the form without re-running it.
 

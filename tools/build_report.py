@@ -21,7 +21,7 @@ def pct(x):
 
 
 def main():
-    s = (ROOT / "report" / "report_template.html").read_text()
+    s = (ROOT / "report" / "report.html.template").read_text()
     m = json.loads((A / "measurements.json").read_text())
     bench = json.loads((A / "benchmarks.json").read_text())
 
@@ -53,7 +53,7 @@ def main():
     s = re.sub(r"\{\{img:([^}]+)\}\}", inline, s)
     write(ROOT / "report.html", s)
 
-    slides = (ROOT / "report" / "slides_template.html").read_text().replace("{{SVG}}", svg)
+    slides = (ROOT / "report" / "slides.html.template").read_text().replace("{{SVG}}", svg)
     slides = re.sub(r"\{\{img:([^}]+)\}\}", inline, slides)
     write(ROOT / "slides.html", slides)
 

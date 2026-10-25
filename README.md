@@ -117,7 +117,7 @@ offers the subclasses that exist in that edition.
 
 ## Report and slides
 `report.html` (the project report) and `slides.html` (a 10-slide reveal.js deck; use ← → to navigate, F for fullscreen)
-are self-contained: open either one by double-clicking. They're built from `report/` with
+are self-contained: open either one by double-clicking. They're built from the templates in `report/` (not meant to be opened directly) with
 `python tools/build_report.py`.
 
 ## Project layout

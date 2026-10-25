@@ -85,7 +85,8 @@ python -m pytest -q tests
 | **Tuner** | Proposes encounter changes to hit a target difficulty | A new monster lineup, checked by the simulator |
 | **Explainer** | Writes a short briefing for the DM from the measured results | Markdown |
 
-All models are called through Portkey (`gpt-5.6-luna`). **No model ever rolls dice or produces a statistic.**
+All models are called through Portkey (`gpt-5.6-luna`, switching automatically to `gpt-6-luna` if the key rejects it).
+**No model ever rolls dice or produces a statistic.**
 
 ### Safety
 - **Prompt-injection guard.** Free text is scanned, and instruction-like content is removed *before* a model sees it.

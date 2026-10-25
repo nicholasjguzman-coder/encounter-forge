@@ -230,8 +230,9 @@ safety checks. The Tuner → simulator arrow is the key design choice: the agent
 output, and it answers in about 1.7–4 seconds per call. Every agent task is <i>translation</i> (text → structured JSON) or short
 writing, never long reasoning. That's because the hard part, combat math, was deliberately taken out of the model's hands. A larger
 model would mainly add cost and latency to the parts where accuracy depends on validation and the simulator, not on the model's
-intelligence. The model name is one constant in <code>dmsim/llm.py</code> (the course page also lists <code>gpt-6-luna</code>, which
-Portkey accepts too).</p>
+intelligence. The model name is one constant in <code>dmsim/llm.py</code>. The course page lists <code>gpt-6-luna</code> for the
+course key, so if a key rejects <code>gpt-5.6-luna</code>, the client automatically switches to <code>gpt-6-luna</code> and logs the
+switch (covered by a unit test).</p>
 
 <h3>A real run, step by step</h3>
 <p>This is a real fight from my own campaign, re-created in the app. <b>At the table:</b> five level-5 PCs (warlock, bard, fighter,
@@ -345,8 +346,8 @@ regression test, and Figure 11 is the result after the fix. One residual weaknes
 can overshoot by at most one call (about 1 cent).</div>
 
 <pre class="tests">{{PYTEST}}</pre>
-<p class="small">All 18 offline tests (no API key needed): <code>python -m pytest -q tests</code>. They cover the injection guard, the
-spending cap, output clamping, the official difficulty tables, all 62 subclass options, allies, and simulator sanity checks.</p>
+<p class="small">All 19 offline tests (no API key needed): <code>python -m pytest -q tests</code>. They cover the injection guard, the
+spending cap, output clamping, model fallback, the official difficulty tables, all 62 subclass options, allies, and simulator sanity checks.</p>
 
 <!-- ============================== 7. IMPACT ============================== -->
 <h2>6. Impact</h2>

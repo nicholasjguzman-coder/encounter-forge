@@ -13,7 +13,7 @@ from dmsim import agents, compiler, data
 from dmsim.classes import CLASSES, build_pc, describe_build
 from dmsim.subclasses import NOTES as SUB_NOTES, SUBCLASSES, subclass_level
 from dmsim.engine import Settings, Tactics, simulate
-from dmsim.llm import MODEL, BudgetExceeded, Meter
+from dmsim.llm import BudgetExceeded, Meter, active_model
 from dmsim.tuning import TARGETS, distance, on_target, tune
 
 st.set_page_config(page_title="Encounter Forge", page_icon="⚔️", layout="wide")
@@ -705,6 +705,6 @@ with usage_box.container():
     use = session_usage()
     tot = {k: sum(c[k] for c in use) for k in ("input", "cached", "output", "cost")}
     st.markdown("**This session's model usage**")
-    st.caption(f"Model: `{MODEL}` via Portkey")
+    st.caption(f"Model: `{active_model()}` via Portkey")
     st.markdown(f"{len(use)} calls · {tot['input']:,} input ({tot['cached']:,} cached) · {tot['output']:,} output tokens  \n"
                 f"**\\${tot['cost']:.4f}** estimated")

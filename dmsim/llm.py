@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import APIStatusError, OpenAI
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -21,6 +21,10 @@ for env_path in (ROOT / ".env", ROOT.parent / ".env"):
         break
 
 MODEL = os.getenv("DMSIM_MODEL", "gpt-5.6-luna")
+# The course page says the course key works with gpt-6-luna; AGENTS.md specifies gpt-5.6-luna. Use the
+# configured model first and switch to the fallback automatically if the provider rejects it.
+FALLBACK_MODEL = "gpt-6-luna"
+_models = [MODEL] + ([FALLBACK_MODEL] if FALLBACK_MODEL != MODEL else [])
 BASE_URL = "https://api.portkey.ai/v1"
 PROVIDER = "openai"
 
@@ -81,6 +85,25 @@ def client():
     return _client
 
 
+def active_model():
+    return _models[0]
+
+
+def _create(messages):
+    """One completion call; on a client error (e.g. model not allowed for this key) try the fallback model."""
+    while True:
+        try:
+            return client().chat.completions.create(model=_models[0], messages=messages,
+                                                     response_format={"type": "json_object"})
+        except APIStatusError as e:
+            if len(_models) > 1 and 400 <= e.status_code < 500 and e.status_code != 429:
+                _log({"ts": round(time.time(), 2), "agent": "model-fallback", "model": _models[0], "input": 0, "cached": 0,
+                      "output": 0, "cost": 0.0, "seconds": 0, "run": f"switching to {_models[1]} after HTTP {e.status_code}"})
+                _models.pop(0)
+                continue
+            raise
+
+
 def chat_json(agent, system, user, meter=None, retries=2):
     """Call the model and parse a JSON object reply. Logs usage for every attempt."""
     if meter:
@@ -88,17 +111,13 @@ def chat_json(agent, system, user, meter=None, retries=2):
     last_err = None
     for _ in range(retries + 1):
         t0 = time.time()
-        resp = client().chat.completions.create(
-            model=MODEL,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-            response_format={"type": "json_object"},
-        )
+        resp = _create([{"role": "system", "content": system}, {"role": "user", "content": user}])
         u = resp.usage
         cached = getattr(getattr(u, "prompt_tokens_details", None), "cached_tokens", 0) or 0
         rec = {
             "ts": round(t0, 2),
             "agent": agent,
-            "model": MODEL,
+            "model": active_model(),
             "input": u.prompt_tokens,
             "cached": cached,
             "output": u.completion_tokens,

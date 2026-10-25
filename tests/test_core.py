@@ -139,3 +139,33 @@ def test_item_damage_bonus_is_clamped(monkeypatch):
     assert eff[("doom blade", "damage_bonus")]["dice"] == "3d12+3"
     assert not any(e["type"] == "teleport_enemies_away" for e in out["effects"])
     assert sum(ev["type"] == "clamped" for ev in out["events"]) == 3
+
+
+def test_model_fallback_when_provider_rejects_model(monkeypatch):
+    # If the key rejects the configured model (e.g. only gpt-6-luna is allowed), the client switches models.
+    from types import SimpleNamespace
+
+    import openai
+    from dmsim import llm
+
+    class Rejected(openai.APIStatusError):
+        def __init__(self):
+            Exception.__init__(self, "model not allowed for this key")
+            self.status_code = 403
+
+    calls = []
+
+    def create(model, messages, response_format):
+        calls.append(model)
+        if model == "gpt-5.6-luna":
+            raise Rejected()
+        usage = SimpleNamespace(prompt_tokens=10, completion_tokens=5, prompt_tokens_details=SimpleNamespace(cached_tokens=0))
+        return SimpleNamespace(usage=usage, choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok": true}'))])
+
+    fake = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    monkeypatch.setattr(llm, "client", lambda: fake)
+    monkeypatch.setattr(llm, "_models", ["gpt-5.6-luna", "gpt-6-luna"])
+    monkeypatch.setattr(llm, "_log", lambda rec: None)
+    assert llm.chat_json("test", "sys", "user") == {"ok": True}
+    assert calls == ["gpt-5.6-luna", "gpt-6-luna"] and llm.active_model() == "gpt-6-luna"
+    assert llm.chat_json("test", "sys", "user") == {"ok": True} and calls[-1] == "gpt-6-luna"  # stays switched

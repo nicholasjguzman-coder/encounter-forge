@@ -27,6 +27,7 @@ div[data-testid="stMetric"] { background: #221c18; border: 1px solid #3a2f27; bo
 div[data-testid="stMetricLabel"] p { font-size: .82rem; color: #c8bba8; }
 .tier { display:inline-block; padding: 4px 12px; border-radius: 14px; font-weight: 600; margin-right: 8px; }
 .small { color: #a89a87; font-size: .85rem; }
+div[data-testid="stButton"] button { min-width: 2.5rem; padding-left: .45rem; padding-right: .45rem; }
 .safety { border-left: 3px solid #c9a227; padding: 6px 10px; background: #221c18; margin: 4px 0; border-radius: 4px; }
 </style>
 """, unsafe_allow_html=True)
@@ -208,10 +209,10 @@ def render(edition):
                         unsafe_allow_html=True)
 
     # ---- 2. Party & monsters -----------------------------------------------------------------
-    c1, c2 = st.columns(2, gap="large")
+    c1, c2 = st.columns([1.45, 1], gap="large")
     with c1:
         st.markdown("### 🧙 The party")
-        widths = [1.25, 1.7, 0.85, 0.85, 0.35]
+        widths = [1.25, 1.75, 0.8, 0.8, 0.45]
         rows = ss(f"{E}_party_rows", [{"id": i, "cls": c, "sub": None, "level": l, "count": n}
                                       for i, (c, l, n) in enumerate(DEFAULT_PARTY)])
         for h, label in zip(st.columns(widths), ["Class", "Subclass", "Level", "Count", ""]):
@@ -229,7 +230,7 @@ def render(edition):
                                   key=f"{k}_sub_{cls}", label_visibility="collapsed")
             lvl = cc[2].number_input("Level", 1, 20, int(row["level"]), key=f"{k}_lvl", label_visibility="collapsed")
             cnt = cc[3].number_input("Count", 1, 8, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
-            if cc[4].button("🗑️", key=f"{k}_del", help="Remove this character"):
+            if cc[4].button("✕", key=f"{k}_del", help="Remove this character", width="stretch"):
                 remove = row["id"]
             row.update(cls=cls, sub=sub, level=int(lvl), count=int(cnt))
             party.append({"cls": cls, "level": int(lvl), "count": int(cnt), "subclass": None if sub == subs[0] else sub})
@@ -252,7 +253,7 @@ def render(edition):
                             unsafe_allow_html=True)
     with c2:
         st.markdown("### 👹 The monsters")
-        mwidths = [3.2, 0.85, 0.35]
+        mwidths = [2.6, 0.8, 0.55]
         default_rows = [{"id": i, "index": by_name[n], "count": k} for i, (n, k) in enumerate(DEFAULT_MONSTERS[E])]
         mrows = ss(f"{E}_mon_rows", default_rows)
         mon_ids = [i for _, i, _ in data.monster_names(E)]
@@ -266,7 +267,7 @@ def render(edition):
                                   format_func=lambda i: f"{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
                                   label_visibility="collapsed")
             cnt = cc[1].number_input("Count", 1, 20, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
-            if cc[2].button("🗑️", key=f"{k}_del", help="Remove this monster"):
+            if cc[2].button("✕", key=f"{k}_del", help="Remove this monster", width="stretch"):
                 mremove = row["id"]
             row.update(index=idx, count=int(cnt))
             monsters.append({"index": idx, "count": int(cnt)})

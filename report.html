@@ -191,10 +191,11 @@ Everything between an agent and the simulator passes through code checks (the �
   <text x="605" y="216">the only source of numbers</text></g>
   <line x1="564" y1="140" x2="588" y2="140" stroke="#5e554c" marker-end="url(#a)"/>
   <!-- compiled data -->
-  <rect x="590" y="290" width="250" height="58" rx="8" fill="#fff" stroke="#c9bfae"/>
-  <text x="602" y="312" font-weight="bold">SRD rules data, compiled once</text>
-  <text x="602" y="332" font-size="12">⓪ Rules Compiler · 1,351 entries · cached</text>
-  <line x1="715" y1="290" x2="715" y2="237" stroke="#5e554c" marker-end="url(#a)"/>
+  <rect x="680" y="290" width="160" height="72" rx="8" fill="#fff" stroke="#c9bfae"/>
+  <text x="692" y="311" font-weight="bold" font-size="12.5">SRD rules data</text>
+  <text x="692" y="329" font-size="11.5">compiled once, cached</text>
+  <text x="692" y="347" font-size="11.5">⓪ Rules Compiler · 1,351</text>
+  <line x1="760" y1="290" x2="760" y2="239" stroke="#5e554c" marker-end="url(#a)"/>
   <!-- outputs -->
   <rect x="300" y="290" width="210" height="40" rx="6" fill="#1d1a17"/><text x="312" y="315" fill="#fff">⑤ Explainer → briefing</text>
   <rect x="300" y="345" width="210" height="40" rx="6" fill="#1d1a17"/><text x="312" y="370" fill="#fff">⑥ Tuner → new lineup</text>
@@ -202,10 +203,10 @@ Everything between an agent and the simulator passes through code checks (the �
   <text x="32" y="313" font-weight="bold">Results for the DM</text>
   <g font-size="12.5"><text x="32" y="333">TPK % · 1+ / 2+ PCs drop % · resources %</text>
   <text x="32" y="351">HP % · rounds · per-PC risk · allies lost</text><text x="32" y="369">official XP rating vs simulated tier</text></g>
-  <path d="M 615 237 L 615 262 L 405 262 L 405 288" fill="none" stroke="#5e554c" marker-end="url(#a)"/>
+  <path d="M 600 237 L 600 310 L 513 310" fill="none" stroke="#5e554c" marker-end="url(#a)"/>
   <line x1="300" y1="310" x2="272" y2="310" stroke="#5e554c" marker-end="url(#a)"/>
   <!-- tuner loop -->
-  <path d="M 510 365 L 560 365 L 560 250 L 640 250 L 640 237" fill="none" stroke="#a9831a" stroke-width="2.5" marker-end="url(#a)"/>
+  <path d="M 510 365 L 650 365 L 650 240" fill="none" stroke="#a9831a" stroke-width="2.5" marker-end="url(#a)"/>
   <text x="405" y="401" text-anchor="middle" fill="#8a6a10" font-weight="bold" font-size="11.5">gold loop: every proposal is re-simulated</text>
   <!-- meter -->
   <rect x="20" y="410" width="820" height="40" rx="6" fill="#fff6dc" stroke="#a9831a"/>
@@ -218,13 +219,13 @@ safety checks. The Tuner loop (gold arrow) is the key design choice: the agent p
 <h3>Each agent's job</h3>
 <table class="t">
 <tr><th>Agent</th><th>Role</th><th>Tools / data it can use</th><th>Output (validated by code)</th></tr>
-<tr><td>⓪ <b>Rules Compiler</b> (offline)</td><td>Translates every SRD monster action and spell into one combat schema</td><td>Raw SRD JSON; schema guide</td><td>Pydantic-validated stat blocks, cached in <code>data/compiled/</code> (1,351 entries, both editions)</td></tr>
-<tr><td>① <b>Encounter Parser</b></td><td>Plain-English encounter → party, enemies, allies, distance, surprise</td><td>Full monster catalog (custom creatures included), subclass lists</td><td>Only catalog IDs are accepted; levels and counts are capped</td></tr>
-<tr><td>② <b>Items &amp; Effects</b></td><td>Magic items, blessings and curses → typed modifiers</td><td>12 effect types, combatant names, SRD spell list</td><td>Unknown types rejected; +3 attack, AC and save cap; ≤3d12+3 damage riders</td></tr>
-<tr><td>③ <b>Tactician</b></td><td>How each side fights: targeting, fleeing, attacking downed PCs, how freely PCs spend resources</td><td>Monster INT, type and actions; DM notes</td><td>Fixed set of options; per-creature flee threshold 0–100%</td></tr>
-<tr><td>④ <b>Rules Compiler (custom)</b></td><td>A DM's description of a homebrew or non-SRD creature → full stat block</td><td>DMG creation guidelines (prompted); same schema as ⓪</td><td>Numbers clamped (AC 5–30, HP 1–1000); XP and proficiency computed by code</td></tr>
-<tr><td>⑤ <b>Explainer</b></td><td>Short briefing: verdict, biggest threats, comparison with the official rating, one tip</td><td>Pre-formatted results, per-PC and per-monster stats, a sample fight log</td><td>Told to use only the supplied numbers</td></tr>
-<tr><td>⑥ <b>Tuner</b></td><td>Proposes a revised monster lineup to hit a target difficulty band</td><td>Catalog, target band, current results, history of earlier attempts</td><td>Can't change the party or allies; ≤30 monsters; every proposal is re-simulated (up to 4 tries)</td></tr>
+<tr><td><b>Rules Compiler</b> (offline)</td><td>Translates every SRD monster action and spell into one combat schema</td><td>Raw SRD JSON; schema guide</td><td>Pydantic-validated stat blocks, cached in <code>data/compiled/</code> (1,351 entries, both editions)</td></tr>
+<tr><td><b>Encounter Parser</b></td><td>Plain-English encounter → party, enemies, allies, distance, surprise</td><td>Full monster catalog (custom creatures included), subclass lists</td><td>Only catalog IDs are accepted; levels and counts are capped</td></tr>
+<tr><td><b>Items &amp; Effects</b></td><td>Magic items, blessings and curses → typed modifiers</td><td>12 effect types, combatant names, SRD spell list</td><td>Unknown types rejected; +3 attack, AC and save cap; ≤3d12+3 damage riders</td></tr>
+<tr><td><b>Tactician</b></td><td>How each side fights: targeting, fleeing, attacking downed PCs, how freely PCs spend resources</td><td>Monster INT, type and actions; DM notes</td><td>Fixed set of options; per-creature flee threshold 0–100%</td></tr>
+<tr><td><b>Rules Compiler (custom)</b></td><td>A DM's description of a homebrew or non-SRD creature → full stat block</td><td>DMG creation guidelines (prompted); same schema as the offline compiler</td><td>Numbers clamped (AC 5–30, HP 1–1000); XP and proficiency computed by code</td></tr>
+<tr><td><b>Explainer</b></td><td>Short briefing: verdict, biggest threats, comparison with the official rating, one tip</td><td>Pre-formatted results, per-PC and per-monster stats, a sample fight log</td><td>Told to use only the supplied numbers</td></tr>
+<tr><td><b>Tuner</b></td><td>Proposes a revised monster lineup to hit a target difficulty band</td><td>Catalog, target band, current results, history of earlier attempts</td><td>Can't change the party or allies; ≤30 monsters; every proposal is re-simulated (up to 4 tries)</td></tr>
 </table>
 
 <h3>Model choice</h3>
@@ -283,12 +284,12 @@ tokens</b>. These are set in one place, so the dollar figures scale directly if 
 
 <table class="t">
 <tr><th>Agent (measured)</th><th class="n">Calls logged</th><th class="n">Avg input</th><th class="n">Avg cached</th><th class="n">Avg output</th><th class="n">Avg cost</th><th class="n">Avg latency</th></tr>
-<tr><td>① Encounter Parser</td><td class='n'>8</td><td class='n'>4,724</td><td class='n'>0</td><td class='n'>267</td><td class='n'>$0.0086</td><td class='n'>1.7 s</td></tr>
-<tr><td>② Items &amp; Effects</td><td class='n'>7</td><td class='n'>501</td><td class='n'>0</td><td class='n'>371</td><td class='n'>$0.0043</td><td class='n'>3.9 s</td></tr>
-<tr><td>③ Tactician</td><td class='n'>16</td><td class='n'>443</td><td class='n'>0</td><td class='n'>384</td><td class='n'>$0.0044</td><td class='n'>2.9 s</td></tr>
-<tr><td>④ Rules Compiler (custom creature)</td><td class='n'>4</td><td class='n'>1,850</td><td class='n'>890</td><td class='n'>618</td><td class='n'>$0.0075</td><td class='n'>2.5 s</td></tr>
-<tr><td>⑤ Explainer</td><td class='n'>15</td><td class='n'>1,264</td><td class='n'>0</td><td class='n'>367</td><td class='n'>$0.0053</td><td class='n'>2.5 s</td></tr>
-<tr><td>⑥ Tuner</td><td class='n'>18</td><td class='n'>4,722</td><td class='n'>3,387</td><td class='n'>358</td><td class='n'>$0.0057</td><td class='n'>3.5 s</td></tr>
+<tr><td>Encounter Parser</td><td class='n'>8</td><td class='n'>4,724</td><td class='n'>0</td><td class='n'>267</td><td class='n'>$0.0086</td><td class='n'>1.7 s</td></tr>
+<tr><td>Items &amp; Effects</td><td class='n'>7</td><td class='n'>501</td><td class='n'>0</td><td class='n'>371</td><td class='n'>$0.0043</td><td class='n'>3.9 s</td></tr>
+<tr><td>Tactician</td><td class='n'>16</td><td class='n'>443</td><td class='n'>0</td><td class='n'>384</td><td class='n'>$0.0044</td><td class='n'>2.9 s</td></tr>
+<tr><td>Rules Compiler (custom creature)</td><td class='n'>4</td><td class='n'>1,850</td><td class='n'>890</td><td class='n'>618</td><td class='n'>$0.0075</td><td class='n'>2.5 s</td></tr>
+<tr><td>Explainer</td><td class='n'>15</td><td class='n'>1,264</td><td class='n'>0</td><td class='n'>367</td><td class='n'>$0.0053</td><td class='n'>2.5 s</td></tr>
+<tr><td>Tuner</td><td class='n'>18</td><td class='n'>4,722</td><td class='n'>3,387</td><td class='n'>358</td><td class='n'>$0.0057</td><td class='n'>3.5 s</td></tr>
 
 <tr class="hl"><td><b>Rules Compiler (one-time, offline)</b></td><td class="n">1,351</td><td class="n" colspan="3">2.20M in total (1.77M cached, 80%) · 0.77M out</td><td class="n" colspan="2"><b>$8.46 once</b></td></tr>
 </table>

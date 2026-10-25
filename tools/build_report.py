@@ -28,8 +28,8 @@ def main():
     rows = "".join(
         f"<tr><td>{html.escape(b['case'])}</td><td>{b['official']}</td><td class='n'>{pct(b['tpk'])}</td>"
         f"<td class='n'>{pct(b['down'])}</td></tr>\n" for b in bench)
-    names = {"parser": "① Encounter Parser", "items": "② Items &amp; Effects", "tactician": "③ Tactician",
-             "compiler:custom": "④ Rules Compiler (custom creature)", "explainer": "⑤ Explainer", "tuner": "⑥ Tuner"}
+    names = {"parser": "Encounter Parser", "items": "Items &amp; Effects", "tactician": "Tactician",
+             "compiler:custom": "Rules Compiler (custom creature)", "explainer": "Explainer", "tuner": "Tuner"}
     agent_rows = "".join(
         f"<tr><td>{names[k]}</td><td class='n'>{v['n']}</td><td class='n'>{v['input']:,}</td><td class='n'>{v['cached']:,}</td>"
         f"<td class='n'>{v['output']:,}</td><td class='n'>${v['cost']:.4f}</td><td class='n'>{v['seconds']:.1f} s</td></tr>\n"

@@ -34,7 +34,6 @@ div[data-testid="stMetricLabel"] p { font-size: .82rem; color: #c8bba8; }
 TIER_COLORS = {"Trivial": GREY, "Easy": GREEN, "Medium": GOLD, "Hard": "#d07a2d", "Deadly": RED, "Beyond Deadly": "#7a1f1f",
                "Below Low": GREY, "Low": GREEN, "Moderate": GOLD, "High": "#d07a2d", "Above High": RED}
 DEFAULT_PARTY = [("fighter", 5, 1), ("cleric", 5, 1), ("wizard", 5, 1), ("rogue", 5, 1)]
-DEFAULT_SUB = "Default (SRD)"
 DEFAULT_MONSTERS = {"2014": [("Ogre", 2), ("Goblin", 4)], "2024": [("Ogre", 2), ("Goblin Warrior", 4)]}
 
 
@@ -138,9 +137,9 @@ def render(edition):
                 with st.spinner("Encounter Parser is reading your description..."):
                     parsed = agents.parse_encounter(E, clean, meter)
                 if parsed["party"]:
-                    st.session_state[f"{E}_party_df"] = pd.DataFrame(
-                        [{"Class": p["cls"].title(), "Subclass": p.get("subclass") or DEFAULT_SUB, "Level": p["level"],
-                          "Count": p["count"]} for p in parsed["party"]])
+                    st.session_state[f"{E}_party_rows"] = [
+                        {"id": i, "cls": p["cls"], "sub": p.get("subclass"), "level": p["level"], "count": p["count"]}
+                        for i, p in enumerate(parsed["party"])]
                 if parsed["monsters"]:
                     st.session_state[f"{E}_mon_df"] = pd.DataFrame(
                         [{"Monster": by_idx[m["index"]][0], "Count": m["count"]} for m in parsed["monsters"]])
@@ -169,31 +168,35 @@ def render(edition):
     c1, c2 = st.columns(2, gap="large")
     with c1:
         st.markdown("### 🧙 The party")
-        party_df = ss(f"{E}_party_df", pd.DataFrame([{"Class": c.title(), "Subclass": DEFAULT_SUB, "Level": l, "Count": n}
-                                                     for c, l, n in DEFAULT_PARTY]))
-        sub_opts = [DEFAULT_SUB] + sorted({sc for subs in SUBCLASSES[E].values() for sc in subs})
-        party_df = st.data_editor(
-            party_df, key=f"{E}_party_{v}", num_rows="dynamic", width="stretch", hide_index=True,
-            column_config={
-                "Class": st.column_config.SelectboxColumn(options=[c.title() for c in CLASSES], required=True),
-                "Subclass": st.column_config.SelectboxColumn(options=sub_opts, default=DEFAULT_SUB,
-                                                             help="Pick one that belongs to the row's class"),
-                "Level": st.column_config.NumberColumn(min_value=1, max_value=20, step=1, required=True, default=5),
-                "Count": st.column_config.NumberColumn(min_value=1, max_value=8, step=1, required=True, default=1),
-            })
-        party, bad = [], []
-        for _, r in party_df.fillna({"Subclass": DEFAULT_SUB}).dropna().iterrows():
-            cls = str(r["Class"]).lower()
-            if cls not in CLASSES:
-                continue
-            sub = r["Subclass"] if r["Subclass"] != DEFAULT_SUB else None
-            if sub and sub not in SUBCLASSES[E][cls]:
-                bad.append(f"{sub} isn't a {cls.title()} subclass")
-                sub = None
-            party.append({"cls": cls, "level": int(r["Level"]), "count": int(r["Count"]), "subclass": sub})
-        if bad:
-            st.warning("; ".join(bad) + ". Using the default subclass for those rows.")
-        st.caption("Subclasses: " + " · ".join(f"**{c.title()}** {', '.join(SUBCLASSES[E][c])}" for c in CLASSES))
+        widths = [1.25, 1.7, 0.85, 0.85, 0.35]
+        rows = ss(f"{E}_party_rows", [{"id": i, "cls": c, "sub": None, "level": l, "count": n}
+                                      for i, (c, l, n) in enumerate(DEFAULT_PARTY)])
+        for h, label in zip(st.columns(widths), ["Class", "Subclass", "Level", "Count", ""]):
+            h.caption(label)
+        party, remove = [], None
+        for row in rows:
+            k = f"{E}_p{row['id']}_{v}"
+            cc = st.columns(widths, vertical_alignment="center")
+            cls = cc[0].selectbox("Class", CLASSES, index=CLASSES.index(row["cls"]), format_func=str.title,
+                                  key=f"{k}_cls", label_visibility="collapsed")
+            subs = SUBCLASSES[E][cls]
+            # The subclass widget is keyed by class, so switching class shows only that class's subclasses.
+            sub = cc[1].selectbox("Subclass", subs, index=subs.index(row["sub"]) if row["sub"] in subs else 0,
+                                  format_func=lambda x, d=subs[0]: f"{x} (SRD)" if x == d else x,
+                                  key=f"{k}_sub_{cls}", label_visibility="collapsed")
+            lvl = cc[2].number_input("Level", 1, 20, int(row["level"]), key=f"{k}_lvl", label_visibility="collapsed")
+            cnt = cc[3].number_input("Count", 1, 8, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
+            if cc[4].button("✕", key=f"{k}_del", help="Remove this character"):
+                remove = row["id"]
+            row.update(cls=cls, sub=sub, level=int(lvl), count=int(cnt))
+            party.append({"cls": cls, "level": int(lvl), "count": int(cnt), "subclass": None if sub == subs[0] else sub})
+        if remove is not None:
+            rows[:] = [r for r in rows if r["id"] != remove]
+            st.rerun()
+        if st.button("➕ Add a character", key=f"{E}_addpc"):
+            rows.append({"id": max([r["id"] for r in rows] or [-1]) + 1, "cls": "fighter", "sub": None,
+                         "level": rows[-1]["level"] if rows else 5, "count": 1})
+            st.rerun()
         with st.expander("See the quick builds"):
             for p in party:
                 b = build_pc(E, p["cls"], p["level"], subclass=p["subclass"])

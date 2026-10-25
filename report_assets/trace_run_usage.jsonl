@@ -1,0 +1,7 @@
+{"ts": 1792954019.58, "agent": "compiler:custom:2014", "model": "gpt-5.6-luna", "input": 1870, "cached": 0, "output": 760, "cost": 0.0099375, "seconds": 0.52, "run": "custom-1792954019"}
+{"ts": 1792954090.92, "agent": "parser:2014", "model": "gpt-5.6-luna", "input": 4822, "cached": 0, "output": 332, "cost": 0.0093475, "seconds": 2.39, "run": "parse-1792954090"}
+{"ts": 1792954138.58, "agent": "tactician:2014", "model": "gpt-5.6-luna", "input": 612, "cached": 0, "output": 482, "cost": 0.005585, "seconds": 4.18, "run": "run-1792954138"}
+{"ts": 1792954146.68, "agent": "explainer:2014", "model": "gpt-5.6-luna", "input": 1423, "cached": 0, "output": 397, "cost": 0.00574875, "seconds": 3.22, "run": "run-1792954138"}
+{"ts": 1792954256.78, "agent": "tuner:2014", "model": "gpt-5.6-luna", "input": 4741, "cached": 0, "output": 399, "cost": 0.00991625, "seconds": 3.97, "run": "tune-1792954256"}
+{"ts": 1792954262.78, "agent": "tuner:2014", "model": "gpt-5.6-luna", "input": 4809, "cached": 4372, "output": 191, "cost": 0.00300275, "seconds": 2.19, "run": "tune-1792954256"}
+{"ts": 1792954267.41, "agent": "tuner:2014", "model": "gpt-5.6-luna", "input": 4878, "cached": 4372, "output": 204, "cost": 0.003219, "seconds": 2.38, "run": "tune-1792954256"}

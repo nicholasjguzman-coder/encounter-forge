@@ -102,15 +102,63 @@ def _types(entries):
     return types, nonmagical
 
 
+CUSTOM_DIR = ROOT / "data" / "custom"
+CR_XP = {0: 10, 0.125: 25, 0.25: 50, 0.5: 100, 1: 200, 2: 450, 3: 700, 4: 1100, 5: 1800, 6: 2300, 7: 2900, 8: 3900,
+         9: 5000, 10: 5900, 11: 7200, 12: 8400, 13: 10000, 14: 11500, 15: 13000, 16: 15000, 17: 18000, 18: 20000,
+         19: 22000, 20: 25000, 21: 33000, 22: 41000, 23: 50000, 24: 62000, 25: 75000, 26: 90000, 27: 105000,
+         28: 120000, 29: 135000, 30: 155000}
+
+
+def cr_prof(cr):
+    return 2 + max(0, (int(max(cr, 1)) - 1) // 4)
+
+
+def _custom(edition):
+    p = CUSTOM_DIR / f"{edition}.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
 @lru_cache(maxsize=None)
 def raw(edition, kind):
-    return {x["index"]: x for x in json.loads((ROOT / "data/raw" / edition / f"{kind}.json").read_text())}
+    out = {x["index"]: x for x in json.loads((ROOT / "data/raw" / edition / f"{kind}.json").read_text())}
+    if kind == "monsters":
+        out.update({i: c["raw"] for i, c in _custom(edition).items()})
+    return out
 
 
 @lru_cache(maxsize=None)
 def compiled(edition, kind):
     p = ROOT / "data/compiled" / edition / f"{kind}.json"
-    return json.loads(p.read_text()) if p.exists() else {}
+    out = json.loads(p.read_text()) if p.exists() else {}
+    if kind == "monsters":
+        out.update({i: c["combat"] for i, c in _custom(edition).items()})
+    return out
+
+
+def is_custom(index):
+    return str(index).startswith("custom-")
+
+
+def custom_creatures(edition):
+    return _custom(edition)
+
+
+def save_custom(edition, index, raw_entry, combat):
+    """Persist a custom creature and make it available immediately."""
+    CUSTOM_DIR.mkdir(parents=True, exist_ok=True)
+    allc = _custom(edition)
+    allc[index] = {"raw": raw_entry, "combat": combat}
+    (CUSTOM_DIR / f"{edition}.json").write_text(json.dumps(allc, indent=1))
+    raw(edition, "monsters")[index] = raw_entry
+    compiled(edition, "monsters")[index] = combat
+
+
+def delete_custom(edition, index):
+    allc = _custom(edition)
+    allc.pop(index, None)
+    (CUSTOM_DIR / f"{edition}.json").write_text(json.dumps(allc, indent=1))
+    raw(edition, "monsters").pop(index, None)
+    compiled(edition, "monsters").pop(index, None)
 
 
 def monster_names(edition):

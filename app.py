@@ -9,7 +9,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from dmsim import agents, data
+from dmsim import agents, compiler, data
 from dmsim.classes import CLASSES, build_pc, describe_build
 from dmsim.subclasses import NOTES as SUB_NOTES, SUBCLASSES, subclass_level
 from dmsim.engine import Settings, Tactics, simulate
@@ -75,7 +75,7 @@ def target_caption(tg):
 
 def mon_summary(E, monsters):
     by_idx = monster_maps(E)[2]
-    return ", ".join(f"{m['count']}× {by_idx[m['index']][0]}" for m in monsters)
+    return ", ".join(f"{m['count']}× {by_idx.get(m['index'], (m['index'],))[0]}" for m in monsters)
 
 
 def new_version(label, monsters, start_rounds, surprise, results, settings, target=None, rationale=""):
@@ -111,7 +111,7 @@ def creature_rows(E, prefix, rows, v, by_idx, noun, add_label):
         k = f"{E}_{prefix}{row['id']}_{v}"
         cc = st.columns(mwidths, vertical_alignment="center")
         idx = cc[0].selectbox(noun, mon_ids, index=mon_ids.index(row["index"]) if row["index"] in mon_ids else 0,
-                              format_func=lambda i: f"{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
+                              format_func=lambda i: f"{'★ ' if data.is_custom(i) else ''}{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
                               label_visibility="collapsed")
         cnt = cc[1].number_input("Count", 1, 20, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
         if cc[2].button("✕", key=f"{k}_del", help=f"Remove this {noun.lower()}", width="stretch"):
@@ -129,6 +129,61 @@ def creature_rows(E, prefix, rows, v, by_idx, noun, add_label):
     if out:
         st.caption(" · ".join(f"{m['count']}× {by_idx[m['index']][0]} (CR {by_idx[m['index']][1]})" for m in out))
     return out
+
+
+def custom_creature_panel(E):
+    """Homebrew / non-SRD creatures: the Rules Compiler agent builds a stat block from the DM's description."""
+    customs = data.custom_creatures(E)
+    with st.expander(f"🧪 Custom creatures ({len(customs)})", expanded=False):
+        st.caption("Need a creature that isn't in the free SRD, or a homebrew one? Describe it in your own words "
+                   "(or type its stats). The Rules Compiler agent builds a full stat block, filling in anything "
+                   "you leave out. It then appears with a ★ in the Monster and Ally lists.")
+        name = st.text_input("Creature name", key=f"{E}_cname", placeholder="e.g. Needle Blight")
+        desc = st.text_area("Description or stats", key=f"{E}_cdesc", height=100,
+                            placeholder="e.g. Medium plant, CR 1/4. AC 12, 11 HP. Claw +3 to hit, 2d4+1 piercing. "
+                                        "Ranged needles +3, 30/60 ft, 2d6+1 piercing. Can't be blinded.")
+        if st.button("🧪 Build this creature", key=f"{E}_cbuild", disabled=not use_ai):
+            if not (name.strip() and desc.strip()):
+                st.warning("Give the creature a name and a description first.")
+                return
+            clean_n, ev1 = agents.guard_text(name, "custom creature name")
+            clean_d, ev2 = agents.guard_text(desc, "custom creature description")
+            ss(f"{E}_safety", []).extend(ev1 + ev2)
+            meter = Meter(cap_usd=cap, label=f"custom-{int(time.time())}")
+            try:
+                with st.spinner("Rules Compiler is building the stat block..."):
+                    idx, raw_entry, combat, assumptions = compiler.compile_custom(E, clean_n, clean_d, meter)
+                data.save_custom(E, idx, raw_entry, combat)
+                st.session_state[f"{E}_cnote"] = (raw_entry["name"], assumptions, ev1 + ev2)
+            except BudgetExceeded as e:
+                st.error(f"🛡️ {e}")
+            except Exception as e:
+                st.error(f"Couldn't build that creature: {e}")
+            finally:
+                record_meter(meter)
+            st.rerun()
+        note = st.session_state.pop(f"{E}_cnote", None)
+        if note:
+            st.success(f"Built **{note[0]}**. It's now in the Monster and Ally lists." + (f" Filled in: {note[1]}" if note[1] else ""))
+            if note[2]:
+                st.markdown('<div class="safety">🛡️ Instruction-like text was removed before the Rules Compiler read it.</div>',
+                            unsafe_allow_html=True)
+        for idx, c in customs.items():
+            r_, comb = c["raw"], c["combat"]
+            acts = ", ".join(a["name"] for a in comb.get("actions", [])) or "—"
+            cc = st.columns([5, 1], vertical_alignment="center")
+            cc[0].markdown(f"**★ {r_['name']}** · CR {r_['challenge_rating']} · AC {r_['armor_class'][0]['value']} · "
+                           f"HP {r_['hit_points']} · {r_['size']} {r_['type']}  \n<span class='small'>Actions: {acts}</span>",
+                           unsafe_allow_html=True)
+            if cc[1].button("✕", key=f"{E}_cdel_{idx}", help="Delete this custom creature", width="stretch"):
+                data.delete_custom(E, idx)
+                R = st.session_state.get(f"{E}_result")
+                if R and any(m["index"] == idx for ver in R["log"] for m in ver["monsters"] + (ver["settings"].allies or [])):
+                    st.session_state.pop(f"{E}_result", None)  # its results referenced the deleted creature
+                for key in (f"{E}_mon_rows", f"{E}_ally_rows"):
+                    rows = st.session_state.get(key, [])
+                    rows[:] = [r for r in rows if r["index"] != idx]
+                st.rerun()
 
 
 def load_into_form(E, ver):
@@ -294,6 +349,7 @@ def render(edition):
         st.markdown("### 🤝 Allies")
         st.caption("Creatures fighting on the party's side: companions, summons, hirelings (optional).")
         allies = creature_rows(E, "ally", ss(f"{E}_ally_rows", []), v, by_idx, "Ally", "➕ Add an ally")
+        custom_creature_panel(E)
 
     # ---- 3. Conditions ----------------------------------------------------------------------
     st.markdown("### 🗺️ Battlefield & extras")
@@ -449,7 +505,8 @@ def quick_resim(E, R, start_rounds, surprise, items_text, tactics_text):
 
 
 def metric_row(r):
-    cols = st.columns(6)
+    row1, row2 = st.columns(3), st.columns(3)
+    cols = row1 + row2
     cols[0].metric("TPK chance", pct(r["p_tpk"]), help="Every PC at 0 HP or dead at the same time")
     cols[1].metric("1+ PCs at 0 HP", pct(r["p_any_down"]), help="Chance at least one PC drops to 0 HP during the fight")
     cols[2].metric("2+ PCs at 0 HP", pct(r["p_multi_down"]), help="Chance two or more different PCs drop to 0 HP")
@@ -555,7 +612,7 @@ def show_results(E, R):
 
     # ---- Tuning ------------------------------------------------------------------------------
     st.markdown("### 🎯 Tune it")
-    t1, t2 = st.columns([1, 2.4])
+    t1, _ = st.columns([1, 1.4])
     with t1:
         target_name = st.selectbox("Target difficulty", list(TARGETS), index=2, key=f"{E}_target")
         tg = TARGETS[target_name]
@@ -587,17 +644,18 @@ def show_results(E, R):
         if added:
             best = min(added, key=lambda x: distance(x["results"], tg))
             st.session_state[f"{E}_loadsel"] = best["num"]
-    with t2:
-        st.markdown("**📚 Version history**")
+    with st.container():
+        st.markdown("#### 📚 Version history")
         rows = []
         for ver in R["log"]:
             rr = ver["results"]
             rows.append({
                 "#": ver["num"], "": "👁️" if ver["num"] == R.get("current") else "", "Version": ver["label"],
-                "Monsters": mon_summary(E, ver["monsters"]), "Start": f"{ver['start_rounds']} rd",
-                "Surprise": ver["surprise"], "Difficulty": ver["tier"], "TPK": pct(rr["p_tpk"]),
+                "Monsters": mon_summary(E, ver["monsters"]),
+                "Setup": f"{ver['start_rounds']} rd" + ("" if ver["surprise"] == "none" else f", {ver['surprise']} surprised"),
+                "Difficulty": ver["tier"], "TPK": pct(rr["p_tpk"]),
                 "1+ down": pct(rr["p_any_down"]), "2+ down": pct(rr["p_multi_down"]),
-                "Resources": pct(rr["resources_used"]), "Target": ver["target"] or "—",
+                "Resources": pct(rr["resources_used"]),
                 "On target": "" if ver["on_target"] is None else ("✅" if ver["on_target"] else "—"),
             })
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=min(420, 38 + 35 * len(rows)))

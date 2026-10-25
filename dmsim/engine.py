@@ -685,8 +685,10 @@ class Battle:
                     x.temp_hp = max(x.temp_hp, roll(self.rng, f"1d6+{c.level}"))
         if not c.up:
             return
-        flee = self.t.per_monster.get(getattr(c, "index", ""), {}).get("flee_at", self.t.flee_at) if not c.friendly else 0
-        if not c.friendly and flee > 0 and c.hp < c.max_hp * flee:
+        # Non-PC creatures can flee; allies only when the Tactician says so (e.g. horses that bolt).
+        default_flee = 0 if c.friendly else self.t.flee_at
+        flee = self.t.per_monster.get(getattr(c, "index", ""), {}).get("flee_at", default_flee) if not c.is_pc else 0
+        if flee > 0 and (flee >= 1 or c.hp < c.max_hp * flee):
             c.fled = True
             self.log(f"{c.name} flees")
             return

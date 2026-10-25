@@ -1,0 +1,106 @@
+{
+ "custom-needle-blight": {
+  "raw": {
+   "index": "custom-needle-blight",
+   "name": "Needle Blight",
+   "size": "Medium",
+   "type": "plant",
+   "armor_class": [
+    {
+     "value": 12
+    }
+   ],
+   "hit_points": 11,
+   "speed": {
+    "walk": "30 ft.",
+    "fly": "0 ft."
+   },
+   "strength": 12,
+   "dexterity": 12,
+   "constitution": 13,
+   "intelligence": 4,
+   "wisdom": 8,
+   "charisma": 3,
+   "proficiencies": [],
+   "damage_resistances": [],
+   "damage_immunities": [],
+   "damage_vulnerabilities": [],
+   "condition_immunities": [
+    {
+     "index": "blinded"
+    },
+    {
+     "index": "deafened"
+    }
+   ],
+   "challenge_rating": 0.25,
+   "xp": 50,
+   "proficiency_bonus": 2,
+   "custom": true,
+   "description": "Medium plant, CR 1/4. AC 12, 11 HP, speed 30. Can't be blinded or deafened. Claw attack: +3 to hit, 2d4+1 piercing. Needles: ranged attack +3, range 30/60 ft, 2d6+1 piercing."
+  },
+  "combat": {
+   "actions": [
+    {
+     "name": "Claw",
+     "cost": "action",
+     "kind": "attack",
+     "melee": true,
+     "range": 5,
+     "rolls": 1,
+     "attack_bonus": 3,
+     "damage": [
+      {
+       "dice": "2d4+1",
+       "type": "piercing"
+      }
+     ],
+     "targets": 1,
+     "concentration": false,
+     "duration": 1,
+     "cantrip_scaling": false,
+     "support": "full",
+     "notes": ""
+    },
+    {
+     "name": "Needles",
+     "cost": "action",
+     "kind": "attack",
+     "melee": false,
+     "range": 60,
+     "rolls": 1,
+     "attack_bonus": 3,
+     "damage": [
+      {
+       "dice": "2d6+1",
+       "type": "piercing"
+      }
+     ],
+     "targets": 1,
+     "concentration": false,
+     "duration": 1,
+     "cantrip_scaling": false,
+     "support": "approx",
+     "notes": "Range field uses the 60-foot long range; normal range is 30 feet."
+    }
+   ],
+   "multiattack": [],
+   "bonus_actions": [],
+   "reactions": [],
+   "legendary_per_round": 0,
+   "legendary_actions": [],
+   "traits": {
+    "magic_resistance": false,
+    "pack_tactics": false,
+    "regeneration": 0,
+    "regen_blocked_by": [],
+    "undead_fortitude": false,
+    "legendary_resistance": 0,
+    "reaction_ac": 0,
+    "notes": ""
+   },
+   "spells": [],
+   "spell_slots": {}
+  }
+ }
+}

@@ -11,6 +11,9 @@
 It compares these numbers with the official XP rating. It can also **tune** an encounter to a target difficulty:
 an AI agent proposes changes and the simulator re-checks each one.
 You can also add **allies**: SRD creatures fighting on the party's side.
+Creatures that aren't in the SRD (homebrew, or ones from other books) can be built from a plain-English
+description in **🧪 Custom creatures**. The Rules Compiler agent builds the stat block, and it's saved to
+`data/custom/`. A Needle Blight is included as an example.
 Every playtest, battlefield tweak and tuning attempt is kept in a **version history**. You can load any version
 back into the form without re-running it.
 

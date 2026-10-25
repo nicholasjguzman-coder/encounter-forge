@@ -113,3 +113,13 @@ def test_allies_help_the_party():
     assert helped["p_any_down"] < alone["p_any_down"]
     assert set(helped["allies"]) == {"Ally Brown Bear 1", "Ally Brown Bear 2"}
     assert set(helped["pcs"]) == set(alone["pcs"])  # allies never count as PCs
+
+
+def test_custom_creature_example_and_fleeing_allies():
+    # The bundled Needle Blight custom creature works, and allies told to flee leave the fight.
+    assert data.is_custom("custom-needle-blight") and "custom-needle-blight" in data.compiled("2014", "monsters")
+    t = Tactics(per_monster={"riding-horse": {"flee_at": 1.0}})
+    r = simulate("2014", [{"cls": "fighter", "level": 5, "count": 2}], [{"index": "custom-needle-blight", "count": 4}],
+                 Settings(edition="2014", start_rounds=0, tactics=t, allies=[{"index": "riding-horse", "count": 2}]),
+                 n=200, keep_logs=1)
+    assert any("flees" in line for line in r["sample_log"])

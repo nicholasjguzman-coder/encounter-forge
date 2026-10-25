@@ -190,13 +190,14 @@ def tactician(edition, party, monsters, dm_notes, meter, allies=()):
         ' "flee_at": number 0-0.5 (fraction of HP at which monsters flee; 0 = fight to the death),'
         ' "party_targeting": "focus_weakest"|"focus_strongest"|"random",'
         ' "resource_policy": "conserve"|"balanced"|"nova" (how freely PCs spend spell slots and abilities),'
-        ' "per_monster": {monster id: {"targeting": one of the targeting values, "flee_at": number 0-0.5}} '
-        '(only for monster types that behave differently from the defaults above),'
+        ' "per_monster": {monster id: {"targeting": one of the targeting values, "flee_at": number 0-1}} '
+        '(only for creature types, enemy OR allied, that behave differently from the defaults; flee_at 1 = runs away '
+        'immediately instead of fighting, e.g. non-combatant animals),'
         ' "rationale": one or two sentences}\n'
         "Defaults when nothing suggests otherwise: random, false, 0, focus_weakest, balanced. "
         "Low-intelligence beasts usually attack the nearest target; smart foes focus casters."
     )
-    ids = {m["index"] for m in monsters}
+    ids = {m["index"] for m in list(monsters) + list(allies)}
     user = (f"Monster ids: {sorted(ids)}\nEdition: {data.EDITIONS[edition]}\nParty: " + ", ".join(f"{p.get('count', 1)}x {p['cls']} {p['level']}" + (f" ({p['subclass']})" if p.get("subclass") else "")
                                                     for p in party) +
             "\nMonsters (enemies):\n" + monster_summary(edition, monsters) +
@@ -211,7 +212,7 @@ def tactician(edition, party, monsters, dm_notes, meter, allies=()):
             if cfg.get("targeting") in ("random", "focus_weakest", "focus_casters", "nearest"):
                 entry["targeting"] = cfg["targeting"]
             if cfg.get("flee_at") is not None:
-                entry["flee_at"] = max(0.0, min(0.5, float(cfg["flee_at"] or 0)))
+                entry["flee_at"] = max(0.0, min(1.0, float(cfg["flee_at"] or 0)))
             if entry:
                 per[idx] = entry
     return {

@@ -28,7 +28,9 @@
   figure img { width: 100%; border: 1px solid var(--line); border-radius: 6px; display: block; }
   figure.half img { width: 100%; }
   figcaption { font-size: 13px; color: var(--muted); margin-top: 5px; }
+  @media screen { figure img { max-height: 620px; object-fit: contain; object-position: left top; background: #14110f; } }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-nw { display: grid; grid-template-columns: 1fr 2.3fr; gap: 14px; align-items: start; }
   .callout { border-left: 4px solid var(--gold); background: var(--card); padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; }
   .quote { border-left: 4px solid var(--red); background: #fbf1f1; padding: 10px 14px; margin: 12px 0; font-style: italic; border-radius: 0 6px 6px 0; }
   .step { display: inline-block; background: var(--ink); color: #fff; border-radius: 50%; width: 22px; height: 22px;
@@ -47,6 +49,7 @@
     a { color: var(--ink); text-decoration: none; }
     figure { margin: 8px 0 10px; } figcaption { font-size: 8.6pt; }
     figure img { max-height: 3.3in; object-fit: contain; object-position: left; }
+    .grid2 figure img, .grid-nw figure img { max-height: 4.3in; }
     figure.wide img { max-height: 3.9in; }
     pre.tests { columns: 2; column-gap: 16px; font-size: 7pt; }
     .lede { font-size: 11pt; }
@@ -241,12 +244,12 @@ in the rest (ability scores, defenses), said what it assumed, and saved a valida
 
 <p><span class="step">2</span><b>Encounter Parser fills the form from plain English.</b> It separated enemies from <i>allies</i>,
 matched "needle blights" to the new custom creature, and set distance 0 and no surprise. <span class="small">1 call · 4,822 in / 332 out · $0.0093.</span></p>
-<div class="grid2">
+<div class="grid-nw">
 <figure><img src="{{img:report_assets/trace_01_custom_creature.jpg}}" alt="custom creature"><figcaption><b>Figure 2.</b> <span class="step">1</span> The custom-creature panel after building the Needle Blight. It now appears with a ★ in the monster and ally lists.</figcaption></figure>
 <figure><img src="{{img:report_assets/trace_02_parser_filled_form.jpg}}" alt="parser"><figcaption><b>Figure 3.</b> <span class="step">2</span> One description fills the party, monsters and battlefield settings. Each party member uses the SRD default subclass.</figcaption></figure>
 </div>
 
-<div class="grid2">
+<div class="grid-nw">
 <figure><img src="{{img:report_assets/trace_03_allies_battlefield.jpg}}" alt="allies"><figcaption><b>Figure 4.</b> Allies were parsed too. I added one tactics note: <i>the horses are terrified and run; the blights attack whoever is closest.</i></figcaption></figure>
 <figure><img src="{{img:report_assets/trace_06_tactician.jpg}}" alt="tactician"><figcaption><b>Figure 5.</b> <span class="step">3</span><b>Tactician</b> turned the note into settings (horses flee at 100%, blights and mastiff target the nearest enemy) and listed what the simulator approximates. <span class="small">612 in / 482 out · $0.0056.</span></figcaption></figure>
 </div>

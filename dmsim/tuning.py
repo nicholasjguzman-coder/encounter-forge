@@ -7,7 +7,8 @@ TARGETS = {
     "Easy": {"max_tpk": 0.01, "down_min": 0.0, "down_max": 0.10},
     "Medium": {"max_tpk": 0.03, "down_min": 0.10, "down_max": 0.30},
     "Hard": {"max_tpk": 0.10, "down_min": 0.30, "down_max": 0.60},
-    "Deadly": {"max_tpk": 0.35, "min_tpk": 0.10, "down_min": 0.60, "down_max": 1.0},
+    "Deadly": {"max_tpk": 0.50, "min_tpk": 0.10, "down_min": 0.60, "down_max": 1.0},
+    "Extremely Deadly": {"max_tpk": 1.0, "min_tpk": 0.50, "down_min": 0.50, "down_max": 1.0},  # TPK above 50%
 }
 
 

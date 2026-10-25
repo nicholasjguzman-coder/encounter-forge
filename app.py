@@ -31,7 +31,7 @@ div[data-testid="stMetricLabel"] p { font-size: .82rem; color: #c8bba8; }
 </style>
 """, unsafe_allow_html=True)
 
-TIER_COLORS = {"Trivial": GREY, "Easy": GREEN, "Medium": GOLD, "Hard": "#d07a2d", "Deadly": RED, "Beyond Deadly": "#7a1f1f",
+TIER_COLORS = {"Trivial": GREY, "Easy": GREEN, "Medium": GOLD, "Hard": "#d07a2d", "Deadly": RED, "Extremely Deadly": "#7a1f1f",
                "Below Low": GREY, "Low": GREEN, "Moderate": GOLD, "High": "#d07a2d", "Above High": RED}
 DEFAULT_PARTY = [("fighter", 5, 1), ("cleric", 5, 1), ("wizard", 5, 1), ("rogue", 5, 1)]
 DEFAULT_MONSTERS = {"2014": [("Ogre", 2), ("Goblin", 4)], "2024": [("Ogre", 2), ("Goblin Warrior", 4)]}
@@ -57,9 +57,52 @@ def tier_badge(name):
 
 
 def simulated_tier(r):
-    if r["p_tpk"] > TARGETS["Deadly"]["max_tpk"]:
-        return "Beyond Deadly"
+    if r["p_tpk"] > TARGETS["Extremely Deadly"]["min_tpk"]:
+        return "Extremely Deadly"
     return min(TARGETS, key=lambda k: (distance(r, TARGETS[k]), list(TARGETS).index(k)))
+
+
+def target_caption(tg):
+    if tg.get("min_tpk") and tg["max_tpk"] >= 1:
+        tpk = f"TPK above {pct(tg['min_tpk'])}"
+    elif tg.get("min_tpk"):
+        tpk = f"TPK {pct(tg['min_tpk'])}–{pct(tg['max_tpk'])}"
+    else:
+        tpk = f"TPK ≤ {pct(tg['max_tpk'])}"
+    return f"{tpk}; chance a PC drops: {pct(tg['down_min'])}–{pct(tg['down_max'])}"
+
+
+def mon_summary(E, monsters):
+    by_idx = monster_maps(E)[2]
+    return ", ".join(f"{m['count']}× {by_idx[m['index']][0]}" for m in monsters)
+
+
+def new_version(label, monsters, start_rounds, surprise, results, settings, target=None, rationale=""):
+    return {"label": label, "monsters": monsters, "start_rounds": start_rounds, "surprise": surprise,
+            "results": results, "settings": settings, "tier": simulated_tier(results), "target": target,
+            "on_target": on_target(results, TARGETS[target]) if target else None, "rationale": rationale}
+
+
+def add_version(R, ver):
+    ver["num"] = len(R["log"]) + 1
+    R["log"].append(ver)
+    return ver
+
+
+def show_version(E, R, ver):
+    """Make a logged version the one displayed (no re-simulation needed)."""
+    R.update(monsters=ver["monsters"], start_rounds=ver["start_rounds"], surprise=ver["surprise"],
+             results=ver["results"], settings=ver["settings"], current=ver["num"])
+    R["official"] = data.official_difficulty(E, [p["level"] for p in R["party"] for _ in range(p["count"])],
+                                             [data.monster_base(E, m["index"])["xp"] for m in ver["monsters"] for _ in range(m["count"])])
+    R["approx"] = agents.approximations(E, ver["monsters"])
+
+
+def load_into_form(E, ver):
+    st.session_state[f"{E}_mon_rows"] = [{"id": i, "index": m["index"], "count": m["count"]} for i, m in enumerate(ver["monsters"])]
+    st.session_state[f"{E}_dist_init"] = ver["start_rounds"]
+    st.session_state[f"{E}_surprise_init"] = ver["surprise"]
+    st.session_state[f"{E}_v"] = st.session_state.get(f"{E}_v", 0) + 1
 
 
 def monster_maps(edition):
@@ -141,8 +184,8 @@ def render(edition):
                         {"id": i, "cls": p["cls"], "sub": p.get("subclass"), "level": p["level"], "count": p["count"]}
                         for i, p in enumerate(parsed["party"])]
                 if parsed["monsters"]:
-                    st.session_state[f"{E}_mon_df"] = pd.DataFrame(
-                        [{"Monster": by_idx[m["index"]][0], "Count": m["count"]} for m in parsed["monsters"]])
+                    st.session_state[f"{E}_mon_rows"] = [{"id": i, "index": m["index"], "count": m["count"]}
+                                                         for i, m in enumerate(parsed["monsters"])]
                 if parsed["start_rounds"] is not None:
                     st.session_state[f"{E}_dist_init"] = parsed["start_rounds"]
                 if parsed["surprise"]:
@@ -186,7 +229,7 @@ def render(edition):
                                   key=f"{k}_sub_{cls}", label_visibility="collapsed")
             lvl = cc[2].number_input("Level", 1, 20, int(row["level"]), key=f"{k}_lvl", label_visibility="collapsed")
             cnt = cc[3].number_input("Count", 1, 8, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
-            if cc[4].button("✕", key=f"{k}_del", help="Remove this character"):
+            if cc[4].button("🗑️", key=f"{k}_del", help="Remove this character"):
                 remove = row["id"]
             row.update(cls=cls, sub=sub, level=int(lvl), count=int(cnt))
             party.append({"cls": cls, "level": int(lvl), "count": int(cnt), "subclass": None if sub == subs[0] else sub})
@@ -209,15 +252,31 @@ def render(edition):
                             unsafe_allow_html=True)
     with c2:
         st.markdown("### 👹 The monsters")
-        mon_df = ss(f"{E}_mon_df", pd.DataFrame([{"Monster": n, "Count": k} for n, k in DEFAULT_MONSTERS[E]]))
-        mon_df = st.data_editor(
-            mon_df, key=f"{E}_mon_{v}", num_rows="dynamic", width="stretch", hide_index=True,
-            column_config={
-                "Monster": st.column_config.SelectboxColumn(options=labels, required=True),
-                "Count": st.column_config.NumberColumn(min_value=1, max_value=20, step=1, required=True, default=1),
-            })
-        monsters = [{"index": by_name[r["Monster"]], "count": int(r["Count"])}
-                    for _, r in mon_df.dropna().iterrows() if r["Monster"] in by_name]
+        mwidths = [3.2, 0.85, 0.35]
+        default_rows = [{"id": i, "index": by_name[n], "count": k} for i, (n, k) in enumerate(DEFAULT_MONSTERS[E])]
+        mrows = ss(f"{E}_mon_rows", default_rows)
+        mon_ids = [i for _, i, _ in data.monster_names(E)]
+        for h, label in zip(st.columns(mwidths), ["Monster", "Count", ""]):
+            h.caption(label)
+        monsters, mremove = [], None
+        for row in mrows:
+            k = f"{E}_m{row['id']}_{v}"
+            cc = st.columns(mwidths, vertical_alignment="center")
+            idx = cc[0].selectbox("Monster", mon_ids, index=mon_ids.index(row["index"]) if row["index"] in mon_ids else 0,
+                                  format_func=lambda i: f"{by_idx[i][0]} (CR {by_idx[i][1]})", key=f"{k}_idx",
+                                  label_visibility="collapsed")
+            cnt = cc[1].number_input("Count", 1, 20, int(row["count"]), key=f"{k}_cnt", label_visibility="collapsed")
+            if cc[2].button("🗑️", key=f"{k}_del", help="Remove this monster"):
+                mremove = row["id"]
+            row.update(index=idx, count=int(cnt))
+            monsters.append({"index": idx, "count": int(cnt)})
+        if mremove is not None:
+            mrows[:] = [r for r in mrows if r["id"] != mremove]
+            st.rerun()
+        if st.button("➕ Add a monster", key=f"{E}_addmon"):
+            mrows.append({"id": max([r["id"] for r in mrows] or [-1]) + 1, "index": mrows[-1]["index"] if mrows else mon_ids[0],
+                          "count": 1})
+            st.rerun()
         if monsters:
             st.caption(" · ".join(f"{m['count']}× {by_idx[m['index']][0]} (CR {by_idx[m['index']][1]})" for m in monsters))
 
@@ -240,9 +299,21 @@ def render(edition):
         tactics_text = st.text_area("Tactics notes (optional)", key=f"{E}_tactics", height=68,
                                     placeholder="e.g. The goblins flee when the bugbear dies; the cultists focus the healer.")
 
-    run = st.button("🎲 Run the playtest", type="primary", key=f"{E}_run", disabled=not (party and monsters))
+    R0 = st.session_state.get(f"{E}_result")
+    same_enc = bool(R0) and R0["party"] == party and R0["monsters"] == monsters
+    changed = same_enc and (start_rounds != R0["start_rounds"] or surprise != R0["surprise"]
+                            or items_text != R0.get("items_text", "") or tactics_text != R0.get("tactics_text", ""))
+    b1, b2 = st.columns([1, 2.2])
+    run = b1.button("🎲 Run the playtest", type="primary", key=f"{E}_run", disabled=not (party and monsters))
+    quick = b2.button("⚡ Re-simulate with these battlefield & extras changes", key=f"{E}_quick", disabled=not changed,
+                      help="Keeps the same party and monsters and re-runs only the simulation (plus the Items or Tactician "
+                           "agent if you edited that box). Adds a row to the version history.")
+    if R0 and not same_enc:
+        b2.caption("Party or monsters changed since the last run: use 🎲 Run the playtest.")
     if run:
         run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics_text)
+    if quick:
+        quick_resim(E, R0, start_rounds, surprise, items_text, tactics_text)
     res = st.session_state.get(f"{E}_result")
     if res:
         show_results(E, res)
@@ -299,11 +370,66 @@ def run_playtest(E, party, monsters, start_rounds, surprise, items_text, tactics
         record_meter(meter)
         return
     record_meter(meter)
-    st.session_state[f"{E}_result"] = {
-        "party": party, "monsters": monsters, "start_rounds": start_rounds, "surprise": surprise,
-        "results": r, "official": official, "tactics": tactics, "items": items, "approx": approx,
-        "briefing": briefing, "safety": safety, "meter": meter.calls, "settings": settings, "tuning": None, "sim_s": sim_s,
-    }
+    prev = st.session_state.get(f"{E}_result")
+    if prev and prev["party"] == party:  # same party: keep the version history going
+        R = prev
+        R["safety"] = R["safety"] + safety
+        R["meter"] = R["meter"] + meter.calls
+    else:
+        R = {"party": party, "log": [], "safety": safety, "meter": meter.calls, "tune_errors": []}
+    R.update(tactics=tactics, items=items, items_text=items_text, tactics_text=tactics_text, sim_s=sim_s)
+    ver = add_version(R, new_version("Playtest", monsters, start_rounds, surprise, r, settings))
+    show_version(E, R, ver)
+    R["briefing"], R["briefing_for"] = briefing, ver["num"]
+    st.session_state[f"{E}_result"] = R
+
+
+def quick_resim(E, R, start_rounds, surprise, items_text, tactics_text):
+    """Re-simulate the same party and monsters with new battlefield / extras, reusing agent results where possible."""
+    meter = Meter(cap_usd=cap, label=f"quick-{int(time.time())}")
+    changes = []
+    if start_rounds != R["start_rounds"]:
+        changes.append(f"distance {R['start_rounds']}→{start_rounds} rd")
+    if surprise != R["surprise"]:
+        changes.append(f"surprise: {surprise}")
+    try:
+        with st.spinner("Re-simulating..."):
+            if items_text != R.get("items_text", ""):
+                changes.append("magic items")
+                R["items"] = {"effects": [], "ignored": [], "notes": "", "events": []}
+                if use_ai and items_text.strip():
+                    clean, ev = agents.guard_text(items_text, "magic items")
+                    R["safety"] = R["safety"] + ev
+                    names = []
+                    for p in R["party"]:
+                        for k in range(p["count"]):
+                            nm = f"{p['cls'].title()} {p['level']}"
+                            names.append(nm if k == 0 else f"{nm} #{k + 1}")
+                    R["items"] = agents.interpret_items(E, clean, names, meter)
+                    R["safety"] = R["safety"] + R["items"]["events"]
+            if tactics_text != R.get("tactics_text", ""):
+                changes.append("tactics")
+                if use_ai:
+                    clean_t, ev = agents.guard_text(tactics_text, "tactics notes")
+                    R["safety"] = R["safety"] + ev
+                    R["tactics"] = agents.tactician(E, R["party"], R["monsters"], clean_t, meter)
+            t = R["tactics"]
+            settings = Settings(edition=E, start_rounds=start_rounds, surprise=surprise,
+                                tactics=Tactics(**{k: v for k, v in t.items() if k != "rationale"}),
+                                item_effects=R["items"]["effects"])
+            t0 = time.time()
+            r = simulate(E, R["party"], R["monsters"], settings, n=n_sims)
+            R["sim_s"] = time.time() - t0
+    except BudgetExceeded as e:
+        R["safety"] = R["safety"] + [{"field": "budget", "type": "budget_cap", "detail": str(e)}]
+        st.error(f"🛡️ {e}")
+        record_meter(meter)
+        return
+    record_meter(meter)
+    R["meter"] = R["meter"] + meter.calls
+    R.update(items_text=items_text, tactics_text=tactics_text)
+    ver = add_version(R, new_version("Changed " + ", ".join(changes), R["monsters"], start_rounds, surprise, r, settings))
+    show_version(E, R, ver)
 
 
 def metric_row(r):
@@ -319,7 +445,8 @@ def metric_row(r):
 def show_results(E, R):
     r, off = R["results"], R["official"]
     st.divider()
-    st.markdown("## 📊 Results")
+    st.markdown(f"## 📊 Results <span class='small'>· version #{R.get('current', 1)}: {mon_summary(E, R['monsters'])}, "
+                f"start {R['start_rounds']} rd, surprise: {R['surprise']}</span>", unsafe_allow_html=True)
     tier = simulated_tier(r)
     st.markdown(
         f"Simulated difficulty: {tier_badge(tier)} &nbsp; Official XP rating: {tier_badge(off['rating'])}"
@@ -334,6 +461,19 @@ def show_results(E, R):
     with left:
         if R["briefing"]:
             st.markdown("#### 📜 The Explainer's briefing")
+            if R.get("briefing_for") != R.get("current"):
+                st.caption(f"This briefing describes version #{R.get('briefing_for')}; you're viewing #{R.get('current')}.")
+                if use_ai and st.button("📜 Refresh the briefing for this version", key=f"{E}_rebrief"):
+                    meter = Meter(cap_usd=cap, label=f"brief-{int(time.time())}")
+                    try:
+                        with st.spinner("Explainer is writing your briefing..."):
+                            R["briefing"] = agents.explain(E, R["party"], R["monsters"], r, off, R["tactics"], R["approx"], meter)
+                        R["briefing_for"] = R["current"]
+                    except BudgetExceeded as e:
+                        st.error(f"🛡️ {e}")
+                    record_meter(meter)
+                    R["meter"] = R["meter"] + meter.calls
+                    st.rerun()
             st.markdown(R["briefing"])
         st.markdown("#### Who is in danger?")
         names = list(r["pcs"])
@@ -392,15 +532,15 @@ def show_results(E, R):
 
     # ---- Tuning ------------------------------------------------------------------------------
     st.markdown("### 🎯 Tune it")
-    t1, t2 = st.columns([1, 2])
+    t1, t2 = st.columns([1, 2.4])
     with t1:
         target_name = st.selectbox("Target difficulty", list(TARGETS), index=2, key=f"{E}_target")
         tg = TARGETS[target_name]
-        st.caption(f"TPK ≤ {pct(tg['max_tpk'])}" + (f" and ≥ {pct(tg['min_tpk'])}" if tg.get("min_tpk") else "") +
-                   f"; chance a PC drops: {pct(tg['down_min'])}–{pct(tg['down_max'])}")
+        st.caption(target_caption(tg))
         if on_target(r, tg):
-            st.success("Already on target.")
+            st.success("The version you're viewing is already on target.")
         go_tune = st.button("🔧 Tune the encounter", key=f"{E}_tune", disabled=not use_ai or on_target(r, tg))
+        st.caption("Starts from the version you're viewing. Every attempt is added to the version history.")
     if go_tune:
         meter = Meter(cap_usd=cap, label=f"tune-{int(time.time())}")
         bar = st.progress(0.0, text="Tuner is proposing changes...")
@@ -410,38 +550,54 @@ def show_results(E, R):
         finally:
             record_meter(meter)
             bar.empty()
-        R["tuning"] = {"target": target_name, "attempts": attempts, "meter": meter.calls}
         R["meter"] = R["meter"] + meter.calls
-    tun = R.get("tuning")
+        added = []
+        for a in attempts[1:]:
+            if "error" in a:
+                R["tune_errors"].append(a["error"])
+                continue
+            s2 = R["settings"]
+            settings = Settings(edition=E, start_rounds=a["start_rounds"], surprise=a["surprise"], max_rounds=s2.max_rounds,
+                                tactics=s2.tactics, item_effects=s2.item_effects)
+            added.append(add_version(R, new_version(f"Tuner → {target_name}", a["monsters"], a["start_rounds"], a["surprise"],
+                                                    a["results"], settings, target=target_name, rationale=a.get("rationale", ""))))
+        if added:
+            best = min(added, key=lambda x: distance(x["results"], tg))
+            st.session_state[f"{E}_loadsel"] = best["num"]
     with t2:
-        if tun:
-            _, by_idx2 = None, monster_maps(E)[2]
-            rows = []
-            valid = [a for a in tun["attempts"] if "results" in a]
-            best = min(valid, key=lambda a: a["distance"])
-            for i, a in enumerate(valid):
-                rr = a["results"]
-                rows.append({
-                    "": "⭐" if a is best else "", "Version": "Original" if i == 0 else f"Attempt {i}",
-                    "Monsters": ", ".join(f"{m['count']}× {by_idx2[m['index']][0]}" for m in a["monsters"]),
-                    "Start": f"{a['start_rounds']} rd", "TPK": pct(rr["p_tpk"]), "≥1 down": pct(rr["p_any_down"]),
-                    "≥2 down": pct(rr["p_multi_down"]), "Resources": pct(rr["resources_used"]),
-                    "On target": "✅" if a["on_target"] else "—",
-                })
-            st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-            for i, a in enumerate(valid[1:], 1):
-                st.markdown(f"<span class='small'><b>Attempt {i}:</b> {a.get('rationale', '')}</span>", unsafe_allow_html=True)
-            for a in tun["attempts"]:
-                if "error" in a:
-                    st.warning(f"🛡️ {a['error']}")
-            if best is not valid[0] and st.button("Use the ⭐ version", key=f"{E}_use_best"):
-                st.session_state[f"{E}_mon_df"] = pd.DataFrame(
-                    [{"Monster": by_idx2[m["index"]][0], "Count": m["count"]} for m in best["monsters"]])
-                st.session_state[f"{E}_dist_init"] = best["start_rounds"]
-                st.session_state[f"{E}_surprise_init"] = best["surprise"]
-                st.session_state[f"{E}_v"] = st.session_state.get(f"{E}_v", 0) + 1
-                st.session_state.pop(f"{E}_result", None)
-                st.rerun()
+        st.markdown("**📚 Version history**")
+        rows = []
+        for ver in R["log"]:
+            rr = ver["results"]
+            rows.append({
+                "#": ver["num"], "": "👁️" if ver["num"] == R.get("current") else "", "Version": ver["label"],
+                "Monsters": mon_summary(E, ver["monsters"]), "Start": f"{ver['start_rounds']} rd",
+                "Surprise": ver["surprise"], "Difficulty": ver["tier"], "TPK": pct(rr["p_tpk"]),
+                "1+ down": pct(rr["p_any_down"]), "2+ down": pct(rr["p_multi_down"]),
+                "Resources": pct(rr["resources_used"]), "Target": ver["target"] or "—",
+                "On target": "" if ver["on_target"] is None else ("✅" if ver["on_target"] else "—"),
+            })
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", height=min(420, 38 + 35 * len(rows)))
+        st.caption("👁️ = the version shown above. Load any version to view its full results and copy it into the form — no re-run needed.")
+        nums = [ver["num"] for ver in R["log"]]
+        l1, l2 = st.columns([2.5, 1], vertical_alignment="bottom")
+        if st.session_state.get(f"{E}_loadsel") not in nums:
+            st.session_state[f"{E}_loadsel"] = R.get("current", nums[-1])
+        pick = l1.selectbox("Version", nums, key=f"{E}_loadsel",
+                            format_func=lambda n: f"#{n} · {R['log'][n - 1]['label']} · {mon_summary(E, R['log'][n - 1]['monsters'])}")
+        if l2.button("Load this version", key=f"{E}_load", disabled=pick == R.get("current")):
+            ver = R["log"][pick - 1]
+            show_version(E, R, ver)
+            load_into_form(E, ver)
+            st.rerun()
+        notes = [ver for ver in R["log"] if ver.get("rationale")]
+        if notes:
+            with st.expander("Why the Tuner made each change"):
+                for ver in notes:
+                    st.markdown(f"<span class='small'><b>#{ver['num']}</b> ({ver['target']}): {ver['rationale']}</span>",
+                                unsafe_allow_html=True)
+        for err in R.get("tune_errors", []):
+            st.warning(f"🛡️ {err}")
 
     # ---- Token usage for this run -----------------------------------------------------------
     with st.expander("🪙 Tokens & cost for this run"):
